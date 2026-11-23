@@ -1,0 +1,2551 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>工具矩阵 · 打开就能用的在线小工具</title>
+<meta name="description" content="装修报价试算器、材料用量计算等实用在线工具，不用注册、不用下载，打开就能算。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%232563eb'/%3E%3Cpath d='M9 21V11h4l3 5 3-5h4v10h-3v-5l-2 3.5h-2L14 16v5z' fill='white'/%3E%3C/svg%3E">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#f5f7fb;
+  --card:#ffffff;
+  --ink:#0c1524;
+  --ink-2:#4a5568;
+  --ink-3:#8a94a6;
+  --line:#e5eaf3;
+  --line-2:#d7e0ee;
+  --blue:#2563eb;
+  --blue-d:#1d4ed8;
+  --blue-soft:#eff5ff;
+  --orange:#e2610c;
+  --orange-soft:#fff4ec;
+  --teal:#0d9488;
+  --radius:16px;
+  --shadow:0 1px 2px rgba(12,21,36,.04), 0 10px 28px -12px rgba(12,21,36,.12);
+  --shadow-lg:0 2px 4px rgba(12,21,36,.04), 0 24px 48px -18px rgba(12,21,36,.20);
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+}
+
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--font);
+  background:var(--bg);
+  color:var(--ink);
+  line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit}
+::selection{background:#c7dbff;color:#0c1524}
+
+/* ---------- 顶栏 ---------- */
+.topbar{
+  position:sticky;top:0;z-index:60;
+  background:rgba(255,255,255,.86);
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line);
+}
+.topbar-in{
+  max-width:1200px;margin:0 auto;padding:0 22px;
+  height:62px;display:flex;align-items:center;justify-content:space-between;gap:18px;
+}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:16.5px;letter-spacing:-.015em}
+.brand-mark{
+  width:31px;height:31px;border-radius:9px;flex:0 0 auto;
+  background:linear-gradient(140deg,#2563eb,#0d9488);
+  display:grid;place-items:center;color:#fff;
+  box-shadow:0 4px 12px -3px rgba(37,99,235,.55);
+}
+.brand-mark svg{width:17px;height:17px}
+.brand small{font-weight:600;color:var(--ink-3);font-size:11.5px;letter-spacing:.04em;text-transform:uppercase}
+.topbar-nav{display:flex;align-items:center;gap:6px}
+.nav-link{
+  font-size:13.5px;font-weight:600;color:var(--ink-2);
+  padding:7px 12px;border-radius:9px;transition:.16s;cursor:pointer;background:none;border:0;
+}
+.nav-link:hover{background:var(--blue-soft);color:var(--blue)}
+.nav-ghost{
+  font-size:13.5px;font-weight:600;color:#fff;background:var(--ink);
+  padding:8px 15px;border-radius:9px;transition:.16s;border:0;cursor:pointer;
+}
+.nav-ghost:hover{background:#22304a}
+
+/* ---------- 首页 Hero ---------- */
+.hero{
+  position:relative;overflow:hidden;
+  background:linear-gradient(155deg,#070e1c 0%,#0e1a30 48%,#0a1526 100%);
+  color:#fff;padding:76px 0 88px;
+}
+.hero::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(720px 340px at 12% -6%,rgba(37,99,235,.42),transparent 68%),
+    radial-gradient(620px 320px at 88% 8%,rgba(13,148,136,.30),transparent 66%);
+}
+.hero::after{
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:.22;
+  background-image:linear-gradient(rgba(255,255,255,.055) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(255,255,255,.055) 1px,transparent 1px);
+  background-size:56px 56px;
+  -webkit-mask-image:radial-gradient(circle at 50% 0%,#000,transparent 72%);
+  mask-image:radial-gradient(circle at 50% 0%,#000,transparent 72%);
+}
+.wrap{max-width:1200px;margin:0 auto;padding:0 22px;position:relative;z-index:2}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:12.5px;font-weight:600;color:#c9d8f5;
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);
+  padding:6px 13px;border-radius:999px;margin-bottom:22px;
+}
+.pulse{width:6px;height:6px;border-radius:50%;background:#34d399;box-shadow:0 0 0 4px rgba(52,211,153,.18);animation:pl 2.2s ease-in-out infinite}
+@keyframes pl{0%,100%{opacity:1}50%{opacity:.42}}
+.hero h1{
+  font-size:clamp(30px,5vw,50px);line-height:1.16;letter-spacing:-.03em;
+  font-weight:800;margin-bottom:18px;max-width:16em;
+}
+.grad{
+  background:linear-gradient(100deg,#7dd3fc,#a5b4fc 45%,#5eead4);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.hero p.lede{
+  font-size:clamp(14.5px,1.7vw,17px);color:#a9b8d0;max-width:38em;margin-bottom:32px;line-height:1.75;
+}
+.hero-cta{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  font-size:14.5px;font-weight:700;padding:12px 22px;border-radius:11px;
+  border:1px solid transparent;cursor:pointer;transition:.18s;letter-spacing:-.005em;
+}
+.btn-primary{background:#3b82f6;color:#fff;box-shadow:0 8px 24px -8px rgba(59,130,246,.75)}
+.btn-primary:hover{background:#2f74e8;transform:translateY(-1px)}
+.btn-ghost{background:rgba(255,255,255,.08);color:#e8eefb;border-color:rgba(255,255,255,.18)}
+.btn-ghost:hover{background:rgba(255,255,255,.15)}
+.hero-meta{
+  margin-top:34px;display:flex;flex-wrap:wrap;gap:26px 40px;
+  padding-top:26px;border-top:1px solid rgba(255,255,255,.1);
+}
+.hero-meta div{font-size:13px;color:#8fa0bb}
+.hero-meta b{display:block;font-size:19px;color:#fff;font-weight:750;letter-spacing:-.02em;margin-bottom:2px}
+.hero-meta b i{font-style:normal;font-size:12.5px;font-weight:600;color:#8fa0bb;margin-left:3px}
+
+/* ---------- 区块标题 ---------- */
+.section{padding:58px 0 20px}
+.sec-head{margin-bottom:26px;display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.sec-tag{
+  display:inline-block;font-size:11px;font-weight:800;letter-spacing:.14em;
+  color:var(--blue);background:var(--blue-soft);padding:4px 10px;border-radius:6px;margin-bottom:11px;
+}
+.sec-head h2{font-size:clamp(21px,2.9vw,27px);font-weight:800;letter-spacing:-.025em;line-height:1.3}
+.sec-head p{font-size:14px;color:var(--ink-3);margin-top:7px}
+.sec-note{font-size:13px;color:var(--ink-3);flex:0 0 auto;padding-bottom:4px}
+
+/* ---------- 工具卡片墙 ---------- */
+.tool-groups{display:flex;flex-direction:column;gap:30px;padding-bottom:14px}
+.tool-group h3{font-size:15px;font-weight:800;letter-spacing:-.01em;margin:0 0 12px;display:flex;align-items:center;gap:9px}
+.tool-group h3::before{content:"";width:4px;height:17px;border-radius:99px;background:var(--group-color,var(--blue))}
+.tool-group h3 span{font-size:11px;color:var(--ink-3);font-weight:600}
+.tool-group-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(276px,1fr));gap:16px}
+.tool-card{
+  position:relative;background:var(--card);border:1px solid var(--line);
+  border-radius:var(--radius);padding:20px 20px 18px;
+  display:flex;flex-direction:column;gap:9px;
+  transition:transform .22s cubic-bezier(.2,.7,.3,1),box-shadow .22s,border-color .22s;
+  overflow:hidden;
+}
+.tool-card::after{
+  content:"";position:absolute;left:0;right:0;top:0;height:2px;
+  background:linear-gradient(90deg,var(--blue),var(--teal));
+  opacity:0;transition:.22s;
+}
+.tool-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg);border-color:#cadcf8}
+.tool-card:hover::after{opacity:1}
+.tool-card[data-status="soon"]{
+  background:#fafbfe;border-style:dashed;border-color:#e2e8f2;
+  cursor:default;pointer-events:none;
+}
+.tool-card[data-status="soon"] .tool-ico{
+  background:#f1f4f9;color:#a3aec2;box-shadow:none;
+}
+.tool-ico{
+  width:42px;height:42px;border-radius:12px;flex:0 0 auto;
+  display:grid;place-items:center;
+  background:linear-gradient(145deg,#eef4ff,#e3edff);color:var(--blue);
+  box-shadow:0 5px 14px -6px rgba(37,99,235,.35);
+}
+.tool-ico svg{width:21px;height:21px}
+.tool-card h3{font-size:16px;font-weight:750;letter-spacing:-.015em;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.tool-card p{font-size:13px;color:var(--ink-3);line-height:1.6;flex:1}
+.tool-tag{
+  font-size:10.5px;font-weight:800;letter-spacing:.06em;
+  padding:2.5px 7px;border-radius:5px;text-transform:uppercase;
+}
+.tool-tag.live{background:#e7f8f3;color:#0a7a6b}
+.tool-tag.soon{background:#eef1f6;color:#93a0b4}
+.tool-foot{
+  display:flex;align-items:center;justify-content:space-between;
+  padding-top:12px;border-top:1px solid #f0f3f8;margin-top:3px;
+  font-size:12.5px;font-weight:650;color:var(--blue);
+}
+.tool-foot span.arrow{transition:transform .2s}
+.tool-card:hover .tool-foot span.arrow{transform:translateX(3px)}
+.tool-card[data-status="soon"] .tool-foot{color:var(--ink-3);font-weight:600}
+
+/* ---------- 工具页外壳 ---------- */
+.toolbar{
+  background:#fff;border-bottom:1px solid var(--line);
+  padding:14px 0;
+}
+.toolbar-in{max-width:1200px;margin:0 auto;padding:0 22px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.back-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:13.5px;font-weight:650;color:var(--ink-2);
+  background:#f4f7fc;border:1px solid var(--line);border-radius:9px;
+  padding:7px 13px;cursor:pointer;transition:.16s;
+}
+.back-btn:hover{background:#eaf1fc;color:var(--blue);border-color:#c9dbf8}
+.toolbar-title{font-size:15px;font-weight:750;letter-spacing:-.015em}
+.toolbar-sub{font-size:12.5px;color:var(--ink-3)}
+
+.tool-body{padding:26px 0 60px}
+.calc-layout{
+  display:grid;grid-template-columns:400px minmax(0,1fr);gap:22px;align-items:start;
+  max-width:1200px;margin:0 auto;padding:0 22px;
+}
+
+/* ---------- 输入面板 ---------- */
+.panel{
+  background:var(--card);border:1px solid var(--line);
+  border-radius:18px;padding:22px;box-shadow:var(--shadow);
+}
+.panel-head{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:20px;padding-bottom:15px;border-bottom:1px solid var(--line);
+}
+.panel-head h3{font-size:14.5px;font-weight:750}
+.panel-head em{font-style:normal;font-size:11.5px;color:var(--ink-3);background:#f4f7fc;padding:3px 8px;border-radius:5px}
+
+.field{margin-bottom:19px}
+.field-label{
+  display:flex;align-items:baseline;justify-content:space-between;gap:10px;
+  font-size:13px;font-weight:700;color:var(--ink-2);margin-bottom:9px;
+}
+.field-label b{font-size:14px;color:var(--blue);font-family:var(--mono);font-weight:700}
+.field-hint{font-size:11.5px;color:var(--ink-3);font-weight:500}
+
+.num-wrap{display:flex;align-items:center;gap:10px}
+.num-input{
+  flex:1;min-width:0;height:42px;padding:0 13px;
+  font-family:var(--mono);font-size:18px;font-weight:700;color:var(--ink);
+  background:#f8fafd;border:1.5px solid var(--line-2);border-radius:10px;
+  transition:.16s;outline:none;
+}
+.num-input:focus{border-color:var(--blue);background:#fff;box-shadow:0 0 0 3.5px rgba(37,99,235,.1)}
+.num-unit{font-size:13px;color:var(--ink-3);font-weight:600;flex:0 0 auto}
+
+input[type=range]{
+  -webkit-appearance:none;appearance:none;width:100%;height:5px;
+  background:linear-gradient(90deg,var(--blue) var(--pct,40%),#e3e9f3 var(--pct,40%));
+  border-radius:99px;outline:none;margin-top:13px;cursor:pointer;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:18px;height:18px;border-radius:50%;
+  background:#fff;border:3px solid var(--blue);
+  box-shadow:0 2px 6px rgba(37,99,235,.35);cursor:grab;
+}
+input[type=range]::-moz-range-thumb{
+  width:14px;height:14px;border-radius:50%;background:#fff;border:3px solid var(--blue);
+  box-shadow:0 2px 6px rgba(37,99,235,.35);cursor:grab;
+}
+
+.seg{display:flex;gap:5px;background:#eef2f9;padding:4px;border-radius:11px}
+.seg button{
+  flex:1;border:0;background:transparent;padding:9px 4px;border-radius:8px;
+  font-size:13px;font-weight:650;color:var(--ink-2);cursor:pointer;transition:.15s;
+  white-space:nowrap;
+}
+.seg button:hover{color:var(--blue)}
+.seg button.on{background:#fff;color:var(--blue);box-shadow:0 1px 3px rgba(12,21,36,.11)}
+
+.grade-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.grade{
+  border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;
+  cursor:pointer;background:#fff;transition:.16s;text-align:left;
+}
+.grade:hover{border-color:#c2d6f5;background:#fbfdff}
+.grade.on{border-color:var(--blue);background:var(--blue-soft);box-shadow:0 0 0 3px rgba(37,99,235,.08)}
+.grade b{display:block;font-size:13.5px;font-weight:750;letter-spacing:-.01em}
+.grade span{display:block;font-size:11px;color:var(--ink-3);margin-top:1px;font-variant-numeric:tabular-nums}
+.grade.on span{color:#4b7ae0}
+
+.switch-row{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:12px 14px;background:#f8fafd;border:1px solid var(--line);border-radius:11px;
+}
+.switch-row .sw-txt b{display:block;font-size:13.5px;font-weight:700}
+.switch-row .sw-txt span{display:block;font-size:11.5px;color:var(--ink-3)}
+.switch{
+  position:relative;width:44px;height:25px;flex:0 0 auto;
+  background:#cdd6e4;border-radius:99px;cursor:pointer;transition:.2s;border:0;
+}
+.switch::after{
+  content:"";position:absolute;top:3px;left:3px;width:19px;height:19px;
+  background:#fff;border-radius:50%;transition:.2s;
+  box-shadow:0 1px 3px rgba(12,21,36,.24);
+}
+.switch.on{background:var(--blue)}
+.switch.on::after{transform:translateX(19px)}
+
+/* ---------- 结果面板 ---------- */
+.result{
+  background:var(--card);border:1px solid var(--line);border-radius:20px;
+  overflow:hidden;box-shadow:var(--shadow-lg);
+}
+.result-head{
+  position:relative;overflow:hidden;color:#fff;padding:26px 26px 24px;
+  background:linear-gradient(150deg,#0c1729 0%,#152441 58%,#101d34 100%);
+}
+.result-head::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(520px 200px at 88% -20%,rgba(37,99,235,.5),transparent 70%);
+}
+.rh-inner{position:relative;z-index:1}
+.rh-label{
+  font-size:12px;font-weight:700;letter-spacing:.1em;color:#93a8c8;
+  text-transform:uppercase;margin-bottom:9px;
+}
+.price-row{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap}
+.price-main{
+  font-size:clamp(28px,3.6vw,38px);font-weight:800;letter-spacing:-.028em;
+  font-variant-numeric:tabular-nums;line-height:1.12;
+}
+.price-sep{font-size:20px;color:#7d90ad;font-weight:400;margin:0 1px}
+.price-side{
+  font-size:12.5px;color:#93a8c8;margin-top:12px;
+  display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;
+}
+.price-side b{color:#dbe7fb;font-weight:700;font-variant-numeric:tabular-nums}
+.price-chip{
+  background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.13);
+  padding:3px 9px;border-radius:6px;font-size:11.5px;font-weight:650;color:#c8d8f2;
+}
+
+/* 占比条 */
+.share-bar{display:flex;height:7px;border-radius:99px;overflow:hidden;background:#eef2f9;margin:0}
+.share-legend{
+  display:flex;flex-wrap:wrap;gap:6px 18px;padding:13px 26px;
+  border-bottom:1px solid var(--line);background:#fbfcff;
+}
+.share-legend div{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--ink-2);font-weight:600}
+.share-legend i{width:8px;height:8px;border-radius:2.5px;display:block;flex:0 0 auto}
+
+/* 明细 */
+.detail-tools{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:15px 26px 10px;
+}
+.detail-tools h4{font-size:13.5px;font-weight:750;letter-spacing:-.01em}
+.detail-tools h4 span{font-size:11.5px;color:var(--ink-3);font-weight:600;margin-left:6px}
+.detail-actions{display:flex;gap:7px}
+.mini-btn{
+  font-size:12px;font-weight:650;color:var(--ink-2);
+  background:#f4f7fc;border:1px solid var(--line);border-radius:7px;
+  padding:5px 10px;cursor:pointer;transition:.15s;
+}
+.mini-btn:hover{background:#eaf1fc;color:var(--blue);border-color:#c9dbf8}
+.mini-btn:active{transform:scale(.97)}
+
+.group-label{
+  display:flex;align-items:center;gap:8px;
+  padding:14px 26px 6px;font-size:11px;font-weight:800;
+  letter-spacing:.1em;color:var(--ink-3);text-transform:uppercase;
+}
+.group-label span{white-space:nowrap;flex:0 0 auto}
+.group-label::after{content:"";flex:1;height:1px;background:var(--line)}
+
+.row{
+  display:grid;grid-template-columns:minmax(0,1fr) auto;
+  gap:16px;align-items:center;padding:10px 26px;
+  transition:background .15s;
+}
+.row:hover{background:#fafcff}
+.row:last-child{padding-bottom:18px}
+.row-main{min-width:0}
+.row-name{font-size:13.5px;font-weight:650;color:var(--ink);display:flex;align-items:center;gap:7px}
+.row-dot{width:6px;height:6px;border-radius:50%;flex:0 0 auto}
+.row-formula{
+  font-size:11.5px;color:var(--ink-3);font-family:var(--mono);
+  margin-top:2px;line-height:1.5;
+}
+.row-amt{
+  font-size:14px;font-weight:750;color:var(--ink);
+  font-variant-numeric:tabular-nums;white-space:nowrap;letter-spacing:-.01em;
+  text-align:right;
+}
+.row-amt em{font-style:normal;font-size:10.5px;color:var(--ink-3);font-weight:600;margin-left:5px}
+
+.total-row{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:16px 26px;margin-top:4px;
+  background:linear-gradient(90deg,#fff8f2,#fffdfb);
+  border-top:1px solid #fbe6d3;
+}
+.total-row .tl{font-size:13px;font-weight:750;color:#8a4b16}
+.total-row .tl span{display:block;font-size:11px;color:#b57a45;font-weight:600;margin-top:1px}
+.total-row .tv{
+  font-size:19px;font-weight:800;color:var(--orange);
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em;
+}
+
+.disclaimer{
+  padding:14px 26px 20px;font-size:11.5px;color:var(--ink-3);line-height:1.7;
+  border-top:1px dashed var(--line);background:#fcfdff;
+}
+.disclaimer b{color:var(--ink-2)}
+
+.empty-tip{
+  padding:56px 26px;text-align:center;color:var(--ink-3);font-size:13.5px;
+}
+
+/* ---------- 页脚 ---------- */
+footer{
+  border-top:1px solid var(--line);background:#fff;
+  padding:30px 0;margin-top:40px;
+}
+.foot{
+  max-width:1200px;margin:0 auto;padding:0 22px;
+  display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;
+  font-size:12.5px;color:var(--ink-3);
+}
+.foot-links{display:flex;gap:18px;flex-wrap:wrap}
+.foot-links a{color:var(--ink-2);font-weight:600;transition:.15s}
+.foot-links a:hover{color:var(--blue)}
+
+/* ---------- 提示条 ---------- */
+.toast{
+  position:fixed;left:50%;bottom:32px;transform:translate(-50%,90px);
+  background:#0c1524;color:#fff;font-size:13px;font-weight:650;
+  padding:11px 20px;border-radius:11px;box-shadow:0 16px 40px -12px rgba(12,21,36,.5);
+  opacity:0;transition:.28s cubic-bezier(.2,.8,.3,1);z-index:200;pointer-events:none;
+}
+.toast.show{transform:translate(-50%,0);opacity:1}
+
+/* ---------- 通用工具容器 ---------- */
+.tool-wrap{max-width:1100px;margin:0 auto;padding:0 22px}
+.tool-panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px;box-shadow:var(--shadow)}
+.tool-panel + .tool-panel{margin-top:16px}
+.tool-head{margin-bottom:18px}
+.tool-head h2{font-size:20px;font-weight:800;letter-spacing:-.022em}
+.tool-head p{font-size:13px;color:var(--ink-3);margin-top:5px}
+
+.dropzone{
+  border:2px dashed var(--line-2);border-radius:14px;padding:32px 20px;text-align:center;
+  cursor:pointer;transition:.18s;background:#fafcff;
+}
+.dropzone:hover,.dropzone.over{border-color:var(--blue);background:var(--blue-soft)}
+.dropzone b{display:block;font-size:14.5px;font-weight:750;margin-bottom:4px}
+.dropzone span{font-size:12.5px;color:var(--ink-3)}
+
+.file-list{margin-top:14px;display:flex;flex-direction:column;gap:8px}
+.file-item{
+  display:flex;align-items:center;gap:12px;padding:10px 13px;
+  border:1px solid var(--line);border-radius:10px;font-size:13px;background:#fff;
+}
+.file-item .fi-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+.file-item .fi-size{font-family:var(--mono);font-size:12px;color:var(--ink-3);flex:0 0 auto}
+.file-item .fi-tag{font-size:11px;font-weight:700;padding:2px 7px;border-radius:5px;flex:0 0 auto}
+.fi-tag.ok{background:#e7f8f3;color:#0a7a6b}
+.fi-tag.bad{background:#fdecec;color:#b42318}
+
+.ta{
+  width:100%;min-height:190px;padding:14px;border:1.5px solid var(--line-2);border-radius:12px;
+  font-family:var(--mono);font-size:13px;line-height:1.72;resize:vertical;outline:none;
+  background:#fafcff;transition:.16s;color:var(--ink);
+}
+.ta:focus{border-color:var(--blue);background:#fff;box-shadow:0 0 0 3.5px rgba(37,99,235,.1)}
+.ta.sm{min-height:120px}
+
+.ipt{
+  width:100%;height:42px;padding:0 12px;border:1.5px solid var(--line-2);border-radius:10px;
+  font-size:14px;outline:none;background:#fafcff;font-family:inherit;transition:.16s;color:var(--ink);
+}
+.ipt:focus{border-color:var(--blue);background:#fff;box-shadow:0 0 0 3.5px rgba(37,99,235,.1)}
+select.ipt{cursor:pointer;padding-right:6px}
+
+.field-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+
+.metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));gap:12px}
+.metric{background:#f8fafd;border:1px solid var(--line);border-radius:12px;padding:14px}
+.metric b{display:block;font-size:22px;font-weight:800;letter-spacing:-.025em;font-variant-numeric:tabular-nums;line-height:1.25}
+.metric span{font-size:11.5px;color:var(--ink-3)}
+.metric.accent{background:linear-gradient(140deg,#101c33,#16243d);border-color:#1c2c48}
+.metric.accent b{color:#fff}
+.metric.accent span{color:#93a8c8}
+
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{text-align:left;font-size:11.5px;color:var(--ink-3);font-weight:700;padding:9px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+.tbl td{padding:9px 10px;border-bottom:1px solid #f2f5fa;font-variant-numeric:tabular-nums}
+.tbl th:last-child,.tbl td:last-child{text-align:right}
+.tbl tr:last-child td{border-bottom:0}
+
+.hint{font-size:12px;color:var(--ink-3);margin-top:9px;line-height:1.65}
+.hint b{color:var(--ink-2)}
+.row-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.chip-row{display:flex;flex-wrap:wrap;gap:7px}
+.chip{
+  font-size:12.5px;font-weight:650;color:var(--ink-2);background:#f4f7fc;
+  border:1px solid var(--line);border-radius:8px;padding:6px 11px;cursor:pointer;transition:.15s;
+}
+.chip:hover{background:#eaf1fc;color:var(--blue);border-color:#c9dbf8}
+
+.swatch{display:flex;gap:8px;align-items:center}
+.swatch input[type=color]{
+  width:38px;height:34px;padding:2px;border:1.5px solid var(--line-2);border-radius:8px;
+  background:#fff;cursor:pointer;
+}
+
+.qr-box{display:flex;justify-content:center;padding:18px;background:#f8fafd;border:1px solid var(--line);border-radius:14px}
+.qr-box canvas{max-width:100%;height:auto;image-rendering:pixelated;border-radius:6px}
+
+/* ---------- 响应式 ---------- */
+@media (max-width:960px){
+  .calc-layout{grid-template-columns:1fr;gap:16px}
+  .panel{position:static;max-width:620px;width:100%;margin:0 auto}
+  .hero{padding:56px 0 64px}
+  .hero h1{max-width:none}
+  .section{padding:42px 0 12px}
+  .row,.group-label,.total-row,.detail-tools,.disclaimer,.share-legend{padding-left:18px;padding-right:18px}
+  .result-head{padding:22px 18px 20px}
+}
+@media (max-width:560px){
+  .topbar-in{height:56px;padding:0 16px}
+  .brand small{display:none}
+  .nav-link{padding:6px 9px;font-size:13px}
+  .wrap{padding:0 16px}
+  .calc-layout{padding:0 14px}
+  .panel{padding:17px;border-radius:15px}
+  .tools-grid{grid-template-columns:1fr;gap:12px}
+  .price-main{font-size:27px}
+  .hero-meta{gap:18px 26px}
+  .hero-meta b{font-size:17px}
+  .row-formula{font-size:11px}
+}
+@media print{
+  .topbar,.toolbar,footer,.detail-actions,.hero,.toast{display:none!important}
+  body{background:#fff}
+  .calc-layout{display:block;padding:0}
+  .panel{display:none}
+  .result{box-shadow:none;border:1px solid #ccc}
+}
+</style>
+</head>
+<body>
+
+<!-- ================= 顶栏 ================= -->
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="brand" href="#/" data-nav>
+      <span class="brand-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 7h16M4 12h10M4 17h13"/>
+        </svg>
+      </span>
+      <span>工具矩阵</span>
+      <small>Toolkit</small>
+    </a>
+    <nav class="topbar-nav">
+      <button class="nav-link" data-nav href="#/">全部工具</button>
+      <a class="nav-ghost" href="#/renovation" data-nav>装修报价试算</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ================= 首页 ================= -->
+<main id="page-home">
+
+  <section class="hero">
+    <div class="wrap">
+      <span class="hero-badge"><span class="pulse"></span> 持续更新中 · 每个工具都免费可用</span>
+      <h1>一堆<span class="grad">能干活的小工具</span><br>打开就能用，不用注册</h1>
+      <p class="lede">把日常反复算、反复查、反复处理的活儿做成在线工具。文件、图片、计算、文本，优先做好一个核心功能，打开就能用。</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#/renovation" data-nav>
+          试试装修报价试算器
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        <a class="btn btn-ghost" href="#tools" data-scroll>看看还有什么</a>
+      </div>
+      <div class="hero-meta">
+        <div><b id="stat-tools">1</b>已上线工具</div>
+        <div><b id="stat-soon">5</b>规划中</div>
+        <div><b>0<i>元</i></b>全部免费</div>
+        <div><b>0<i>次</i></b>需注册</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="tools">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <div class="sec-tag">TOOLKIT</div>
+          <h2>把复杂的事，变成一个按钮</h2>
+          <p>先做真正能用的核心功能；文件和图片优先本地处理，不上传原始内容</p>
+        </div>
+        <div class="sec-note">共 <b id="tool-count">6</b> 个工具 · 1 个可用</div>
+      </div>
+      <div class="tool-groups" id="tools-grid"><!-- JS 渲染 --></div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ================= 工具页 ================= -->
+<main id="page-tool" hidden>
+
+  <div class="toolbar">
+    <div class="toolbar-in">
+      <button class="back-btn" data-nav href="#/">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+        返回工具列表
+      </button>
+      <div>
+        <div class="toolbar-title" id="tool-title">装修报价试算器</div>
+        <div class="toolbar-sub" id="tool-sub">按分项工程拆解，输出明细与总价区间</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tool-body">
+    <div id="tool-root"></div>
+  </div>
+</main>
+
+<!-- ================= 页脚 ================= -->
+<footer>
+  <div class="foot">
+    <div>工具矩阵 · 所有计算在本地完成，不留存任何输入数据</div>
+    <div class="foot-links">
+      <a href="#/" data-nav>全部工具</a>
+      <a href="#/renovation" data-nav>装修报价试算</a>
+      <a href="#tools" data-scroll>工具列表</a>
+    </div>
+  </div>
+</footer>
+
+
+<!-- 装修报价试算器：页面模板（由 JS 注入 #tool-root） -->
+<template id="tpl-renovation">
+    <div class="calc-layout">
+
+      <!-- 左：输入 -->
+      <div class="panel">
+        <div class="panel-head">
+          <h3>填写房屋信息</h3>
+          <em>实时计算</em>
+        </div>
+
+        <div class="field">
+          <div class="field-label"><span>建筑面积</span><b id="v-area">100 ㎡</b></div>
+          <div class="num-wrap">
+            <input class="num-input" id="in-area" type="number" min="20" max="400" step="1" value="100" inputmode="numeric">
+            <span class="num-unit">平方米</span>
+          </div>
+          <input type="range" id="rg-area" min="20" max="400" step="1" value="100">
+        </div>
+
+        <div class="field">
+          <div class="field-label"><span>户型</span><span class="field-hint">决定门数与房间量</span></div>
+          <div class="seg" id="seg-rooms">
+            <button data-v="1">一室</button>
+            <button data-v="2" class="on">两室</button>
+            <button data-v="3">三室</button>
+            <button data-v="4">四室+</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="field-label"><span>卫生间数量</span><span class="field-hint">影响防水与洁具</span></div>
+          <div class="seg" id="seg-baths">
+            <button data-v="1" class="on">1 卫</button>
+            <button data-v="2">2 卫</button>
+            <button data-v="3">3 卫</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="field-label"><span>装修档次</span><span class="field-hint">每㎡基装参考</span></div>
+          <div class="grade-grid" id="grade-grid">
+            <button class="grade" data-v="basic"><b>简装</b><span>约 450 元/㎡</span></button>
+            <button class="grade on" data-v="mid"><b>中档</b><span>约 690 元/㎡</span></button>
+            <button class="grade" data-v="high"><b>高档</b><span>约 1030 元/㎡</span></button>
+            <button class="grade" data-v="luxury"><b>豪装</b><span>约 1330 元/㎡</span></button>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="field-label"><span>房屋状态</span></div>
+          <div class="seg" id="seg-state">
+            <button data-v="new" class="on">毛坯房</button>
+            <button data-v="resale">二手房翻新</button>
+          </div>
+        </div>
+
+        <div class="field" style="margin-bottom:0">
+          <div class="switch-row">
+            <div class="sw-txt">
+              <b>包含主材</b>
+              <span>瓷砖、地板、橱柜、卫浴、门、灯具</span>
+            </div>
+            <button class="switch on" id="sw-main" aria-label="包含主材"></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 右：结果 -->
+      <div class="result">
+        <div class="result-head">
+          <div class="rh-inner">
+            <div class="rh-label">估算总价区间</div>
+            <div class="price-row">
+              <span class="price-main" id="p-low">¥0</span>
+              <span class="price-sep">~</span>
+              <span class="price-main" id="p-high">¥0</span>
+            </div>
+            <div class="price-side">
+              <span>折合单价 <b id="p-unit">¥0 / ㎡</b></span>
+              <span class="price-chip" id="p-grade">中档</span>
+              <span class="price-chip" id="p-main">含主材</span>
+              <span class="price-chip" id="p-state">毛坯房</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="share-bar" id="share-bar"></div>
+        <div class="share-legend" id="share-legend"></div>
+
+        <div class="detail-tools">
+          <h4>分项明细 <span id="item-count">0 项</span></h4>
+          <div class="detail-actions">
+            <button class="mini-btn" id="btn-copy">复制明细</button>
+            <button class="mini-btn" id="btn-print">打印 / 存 PDF</button>
+          </div>
+        </div>
+
+        <div id="detail-list"></div>
+
+        <div class="total-row">
+          <div class="tl">估算中值合计<span>含管理费，不含税费与软装家电</span></div>
+          <div class="tv" id="p-total">¥0</div>
+        </div>
+
+        <div class="disclaimer">
+          <b>使用说明：</b>本工具按面积系数法估算，用于快速判断预算量级，不替代现场量房与正式报价。实际价格受材料品牌、施工难度、地区人工费影响，通常上下浮动 10%~20%。单价基准参考二三线城市 2026 年市场行情。
+        </div>
+      </div>
+
+    </div>
+  
+</template>
+
+<div class="toast" id="toast">已复制</div>
+
+<script>
+/* =========================================================
+   工具注册表
+   加一个新工具只需三步：
+   1) 在 TOOLS 里加一条数据（status: 'live'）
+   2) 在下方 TEMPLATES 里加一个 <template id="tpl-你的id">
+   3) 在 ROUTES 里加一条 { id, mount(root) } 初始化函数
+   ========================================================= */
+const TOOLS = [
+  /* ---------- AI 工具 ---------- */
+  { id:'ai-summary', category:'ai', name:'AI 文本摘要', desc:'长文、会议记录、报告粘进来，自动抽取关键句，输出可读摘要。纯本地算法，不联网、不上传。', status:'live', icon:'<path d="M4 6h16M4 12h9M4 18h13"/><path d="M17 15l2 2 3-4"/>', meta:'本地运算 · 免费' },
+  { id:'remove-bg', category:'ai', name:'AI 图片去背景', desc:'商品图、头像一键抠图，导出透明 PNG。模型在浏览器里跑，图片不出本机。', status:'soon', icon:'<path d="M4 4h7M4 4v7M20 20h-7M20 20v-7"/><path d="M9 15l2 2 4-5 3 3"/>', meta:'U²-Netp · Apache-2.0' },
+  { id:'ai-erase', category:'ai', name:'AI 消除笔', desc:'圈掉画面里的路人、电线、水印框，模型自动补全背景。不处理他人版权水印。', status:'soon', icon:'<path d="M4 20h16M7 16l9-9 3 3-9 9z"/><path d="M14 6l3-3 3 3-3 3"/>', meta:'MI-GAN · MIT' },
+  { id:'ai-idphoto', category:'ai', name:'证件照换底色', desc:'一寸二寸自动裁切，红蓝白底一键替换，导出可打印尺寸。', status:'soon', icon:'<rect x="4" y="3" width="16" height="18" rx="2"/><circle cx="12" cy="10" r="2.5"/><path d="M8 18c1.2-2.4 6.8-2.4 8 0"/>', meta:'抠图 + 换底 · 规划中' },
+  { id:'ai-upscale', category:'ai', name:'AI 图片放大', desc:'低清图放大 2-4 倍并补细节，适合老照片和截图。', status:'soon', icon:'<path d="M4 14v6h6M20 10V4h-6"/><path d="M14 10l6-6M10 14l-6 6"/>', meta:'超分 · 规划中' },
+  { id:'ai-ocr', category:'ai', name:'图片文字识别', desc:'截图、扫描件直接提取文字，支持中英文混排，可复制可导出。', status:'soon', icon:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 10h4M7 14h10M15 10h2"/>', meta:'tesseract.js · Apache-2.0' },
+  { id:'ai-polish', category:'ai', name:'AI 文案改写', desc:'同一段话换三种语气：正式、口语、营销。适合写商品描述和回复客户。', status:'soon', icon:'<path d="M12 3l2.2 4.6 5 .7-3.6 3.5.9 5-4.5-2.4-4.5 2.4.9-5L4.8 8.3l5-.7z"/>', meta:'需接模型 · 规划中' },
+
+  /* ---------- 图片工具 ---------- */
+  { id:'img-compress', category:'image', name:'图片压缩 / 格式转换', desc:'批量压缩 JPG、PNG、WebP，可限制最大边长并转格式，直接看压缩前后大小。', status:'live', icon:'<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9" r="1.5"/><path d="M21 15l-5-5L5 20"/>', meta:'本地处理 · 批量' },
+  { id:'img-convert', category:'image', name:'图片尺寸调整', desc:'按固定宽高或百分比缩放，批量导出，保持比例不变形。', status:'soon', icon:'<path d="M12 3v12M8 11l4 4 4-4M5 20h14"/>', meta:'缩放 · 规划中' },
+  { id:'img-watermark', category:'image', name:'图片加水印', desc:'批量加文字或图片水印，位置、透明度、角度可调。', status:'soon', icon:'<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 15l4-4 3 3"/>', meta:'水印 · 规划中' },
+
+  /* ---------- 文件工具 ---------- */
+  { id:'pdf-merge', category:'file', name:'PDF 合并 / 拆分', desc:'多个 PDF 拖进来按顺序合成一个，自动显示每个文件页数，文件不上传。', status:'live', icon:'<path d="M6 2h9l3 3v17H6z"/><path d="M9 13h6M9 17h5"/>', meta:'pdf-lib · MIT' },
+  { id:'pdf-convert', category:'file', name:'PDF 与图片互转', desc:'PDF 每页导出成图片，或把多张图片合成一个 PDF。', status:'soon', icon:'<path d="M4 7h11M11 3l4 4-4 4M20 17H9M13 13l-4 4 4 4"/>', meta:'多格式 · 规划中' },
+  { id:'pdf-compress', category:'file', name:'PDF 压缩', desc:'扫描件、图纸体积太大，压到可发邮件的尺寸。', status:'soon', icon:'<path d="M6 2h9l3 3v17H6z"/><path d="M9 12h6M9 16h4"/>', meta:'规划中' },
+
+  /* ---------- 计算器 ---------- */
+  { id:'renovation', category:'calc', name:'装修报价试算器', desc:'输入面积、户型、档次，自动拆出十二项工程明细与总价区间，含主材可选。', status:'live', icon:'<path d="M3 21h18M6 21V8l6-4 6 4v13M10 21v-6h4v6"/>', meta:'12 项分项 · 4 档标准' },
+  { id:'loan', category:'calc', name:'贷款月供试算', desc:'等额本息与等额本金对比，看月供、总利息和还款明细。', status:'live', icon:'<path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>', meta:'两种还款方式' },
+  { id:'tax', category:'calc', name:'个税计算器', desc:'按月度预扣率表算工资个税，输入社保与专项附加扣除，直接看税后到手。', status:'live', icon:'<path d="M4 20h16M7 20V8M12 20V4M17 20v-7"/>', meta:'2026 预扣率表' },
+  { id:'unit', category:'calc', name:'单位换算', desc:'长度、面积、重量、体积、温度、数据量互转，装修和日常都用得上。', status:'live', icon:'<path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/>', meta:'6 类单位' },
+  { id:'material', category:'calc', name:'材料用量计算器', desc:'瓷砖片数、乳胶漆升数、腻子粉袋数，按实际铺贴面积算，避免多买浪费。', status:'soon', icon:'<path d="M4 7h16M4 12h16M4 17h10"/>', meta:'规划中' },
+  { id:'tile', category:'calc', name:'瓷砖铺贴排版', desc:'按房间尺寸与砖规格，算整砖数、裁切损耗率与最优起铺点。', status:'soon', icon:'<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 3v18"/>', meta:'规划中' },
+  { id:'heat', category:'calc', name:'热量 / BMI 计算器', desc:'每日热量、基础代谢、BMI 与目标体重，适合健康管理。', status:'soon', icon:'<path d="M12 3a4 4 0 0 0-4 4c0 2 1 3 1 4a4 4 0 1 0 6 0c0-1 1-2 1-4a4 4 0 0 0-4-4z"/><path d="M12 14v5"/>', meta:'BMI · TDEE · 规划中' },
+  { id:'engineering', category:'calc', name:'工程测算工具箱', desc:'混凝土、钢筋、砌体、墙地面、油漆等常用工程量快速计算。', status:'soon', icon:'<path d="M4 20h16M6 17l3-8 3 5 3-10 3 13"/>', meta:'工程量 · 规划中' },
+  { id:'quote-check', category:'calc', name:'报价单核对助手', desc:'粘贴装修公司报价，自动查漏项、查重复计价、查单价异常。', status:'soon', icon:'<path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>', meta:'规划中' },
+
+  /* ---------- 文本工具 ---------- */
+  { id:'json', category:'text', name:'JSON 格式化', desc:'格式化、压缩、校验 JSON，出错时标出具体位置，数据只在本地处理。', status:'live', icon:'<path d="M8 3H6a2 2 0 0 0-2 2v3a2 2 0 0 1-2 2 2 2 0 0 1 2 2v3a2 2 0 0 0 2 2h2M16 3h2a2 2 0 0 1 2 2v3a2 2 0 0 0 2 2 2 2 0 0 0-2 2v3a2 2 0 0 1-2 2h-2"/>', meta:'格式化 · 校验' },
+  { id:'text-stats', category:'text', name:'字数 / 文本统计', desc:'字数、字符数、行数、段落、阅读时长和中英文占比，写文案时随手一查。', status:'live', icon:'<path d="M4 6h16M4 12h10M4 18h16"/>', meta:'实时统计' },
+  { id:'qrcode', category:'text', name:'二维码生成器', desc:'网址、文本生成二维码，可选容错级别、尺寸和颜色，下载高清 PNG。', status:'live', icon:'<path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h2v2h-2zM18 18h2v2h-2z"/>', meta:'qrcode-generator · MIT' },
+  { id:'yaml', category:'text', name:'JSON ↔ YAML 转换', desc:'配置文件互转，保留缩进与类型，解析失败会指出具体行。', status:'live', icon:'<path d="M8 3H6a2 2 0 0 0-2 2v3a2 2 0 0 1-2 2 2 2 0 0 1 2 2v3a2 2 0 0 0 2 2h2M16 3h2a2 2 0 0 1 2 2v3a2 2 0 0 0 2 2 2 2 0 0 0-2 2v3a2 2 0 0 1-2 2h-2"/>', meta:'js-yaml · MIT' },
+  { id:'csv', category:'text', name:'CSV 转 JSON', desc:'表格粘进来直接看结构，自动识别分隔符，一键转 JSON 或预览前 20 行。', status:'live', icon:'<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 4v16"/>', meta:'PapaParse · MIT' },
+  { id:'markdown', category:'text', name:'Markdown 预览', desc:'左边写右边看，渲染前过滤脚本与事件属性，适合写文档草稿。', status:'live', icon:'<path d="M3 6h18v12H3z"/><path d="M7 15V9l2.5 3L12 9v6M15 9v6M15 15l2-2"/>', meta:'marked · MIT' },
+  { id:'resume', category:'text', name:'简历生成器', desc:'填写经历和技能，生成结构清晰的中文简历，可打印或保存 PDF。', status:'soon', icon:'<path d="M6 3h12v18H6zM9 7h6M9 11h6M9 15h4"/>', meta:'简历 · 规划中' }
+];
+
+/* ---------- 渲染工具卡片 ---------- */
+const CATEGORY_META = {
+  ai: { label:'AI 工具', note:'本地推理优先，不上传你的内容', color:'#7c3aed' },
+  image: { label:'图片工具', note:'压缩、缩放与格式处理', color:'#0d9488' },
+  file: { label:'文件工具', note:'PDF 与文档处理', color:'#2563eb' },
+  calc: { label:'计算器', note:'工程、生活与财务测算', color:'#e2610c' },
+  text: { label:'文本工具', note:'写作、生成与效率辅助', color:'#0f766e' }
+};
+
+function renderTools(){
+  const grid = document.getElementById('tools-grid');
+  const groups = Object.keys(CATEGORY_META).map(key => {
+    const meta = CATEGORY_META[key];
+    const list = TOOLS.filter(t => t.category === key);
+    return `<section class="tool-group" style="--group-color:${meta.color}">
+      <h3>${meta.label}<span>${meta.note}</span></h3>
+      <div class="tool-group-grid">${list.map(t => {
+        const live = t.status === 'live';
+        return `
+        <a class="tool-card" data-status="${t.status}" href="#/${t.id}" ${live ? 'data-nav' : ''}>
+          <span class="tool-ico" style="${live ? '' : 'background:#f1f4f9;color:#a3aec2;box-shadow:none'}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${t.icon}</svg>
+          </span>
+          <h3>${t.name}${live
+            ? '<span class="tool-tag live">可用</span>'
+            : '<span class="tool-tag soon">即将上线</span>'}</h3>
+          <p>${t.desc}</p>
+          <div class="tool-foot">
+            <span>${t.meta}</span>
+            ${live ? '<span class="arrow">打开 →</span>' : '<span>敬请期待</span>'}
+          </div>
+        </a>`;
+      }).join('')}</div>
+      ${key === 'ai' ? '<div class="hint" style="margin-top:12px">合规说明：AI 生成类功能上线时会在结果中加显式标识（依据《人工智能生成合成内容标识办法》）；当前已上线的摘要为抽取式算法，不调用生成模型，不含合成内容。</div>' : ''}
+    </section>`;
+  }).join('');
+  grid.innerHTML = groups;
+
+  const liveN = TOOLS.filter(t => t.status === 'live').length;
+  document.getElementById('stat-tools').textContent = liveN;
+  document.getElementById('stat-soon').textContent = TOOLS.length - liveN;
+  document.getElementById('tool-count').textContent = TOOLS.length;
+  document.querySelector('.sec-note').innerHTML = `共 <b>${TOOLS.length}</b> 个工具 · ${liveN} 个可用`;
+}
+
+/* =========================================================
+   装修报价：单价模型
+   单价单位：元 / ㎡（固定费用项为元）
+   结构 = 前 9 项施工小计 → 管理费 6% → 设计费 → 清运
+   ========================================================= */
+const PRICE = {
+  basic: {
+    label:'简装', demoA:8, demoR:45, hydro:85, waterproof:75, tile:78, paint:26,
+    ceiling:105, wood:420, door:850, install:35, design:0, waste:800,
+    mTile:85, mFloor:95, mCabinet:1100, mBath:2600, mDoor:900, mLight:45
+  },
+  mid: {
+    label:'中档', demoA:8, demoR:45, hydro:125, waterproof:95, tile:98, paint:36,
+    ceiling:145, wood:620, door:1450, install:55, design:45, waste:1200,
+    mTile:135, mFloor:175, mCabinet:1900, mBath:5200, mDoor:1600, mLight:80
+  },
+  high: {
+    label:'高档', demoA:8, demoR:45, hydro:165, waterproof:125, tile:132, paint:52,
+    ceiling:215, wood:950, door:2400, install:85, design:90, waste:1800,
+    mTile:210, mFloor:300, mCabinet:3200, mBath:9500, mDoor:2800, mLight:140
+  },
+  luxury: {
+    label:'豪装', demoA:8, demoR:45, hydro:210, waterproof:160, tile:168, paint:72,
+    ceiling:290, wood:1400, door:3600, install:120, design:150, waste:2500,
+    mTile:320, mFloor:480, mCabinet:4800, mBath:16000, mDoor:4200, mLight:220
+  }
+};
+
+const GROUPS = {
+  base: { label:'基础施工', color:'#2563eb' },
+  design: { label:'设计与管理', color:'#6366f1' },
+  main: { label:'主材', color:'#e2610c' }
+};
+
+/* ---------- 计算引擎 ---------- */
+function calc(opt){
+  const { area, rooms, baths, grade, resale, withMain } = opt;
+  const p = PRICE[grade];
+  const doors = rooms + baths + 2;   // 卧室门 + 卫生间门 + 入户门 + 厨房门
+  const items = [];
+  const push = (group, name, formula, amount) =>
+    items.push({ group, name, formula, amount: Math.round(amount) });
+
+  /* --- 基础施工 --- */
+  const demo = resale ? area * p.demoR : area * p.demoA;
+  push('base', '拆改工程',
+    resale ? `${area}㎡ × ${p.demoR} 元（拆除 + 清运）` : `${area}㎡ × ${p.demoA} 元（墙体微调）`,
+    demo);
+
+  push('base', '水电改造', `${area}㎡ × ${p.hydro} 元`, area * p.hydro);
+
+  const wpArea = baths * 5.5 + 4;    // 卫生间淋浴区 + 厨房
+  push('base', '防水防潮',
+    `${baths} 卫 + 厨房 = ${wpArea.toFixed(1)}㎡ × ${p.waterproof} 元`,
+    wpArea * p.waterproof);
+
+  const tileArea = area * 0.75;      // 厨卫墙地砖 + 客餐厅地面
+  push('base', '墙地砖铺贴',
+    `${tileArea.toFixed(1)}㎡ × ${p.tile} 元（含辅料）`,
+    tileArea * p.tile);
+
+  const wallArea = area * 2.6;       // 已扣门窗洞口
+  push('base', '墙面涂饰',
+    `${wallArea.toFixed(0)}㎡ × ${p.paint} 元（腻子 + 乳胶漆）`,
+    wallArea * p.paint);
+
+  const ceilArea = area * 0.32;      // 客餐厅局部吊顶 + 厨卫集成吊顶
+  push('base', '吊顶工程', `${ceilArea.toFixed(1)}㎡ × ${p.ceiling} 元`, ceilArea * p.ceiling);
+
+  const woodArea = area * 0.15;      // 石膏板隔墙、背景墙、局部柜体
+  push('base', '木作工程', `${woodArea.toFixed(1)}㎡ × ${p.wood} 元`, woodArea * p.wood);
+
+  push('base', '门窗安装', `${doors} 樘 × ${p.door} 元（含门套五金）`, doors * p.door);
+
+  push('base', '安装工程', `${area}㎡ × ${p.install} 元（灯具洁具五金安装）`, area * p.install);
+
+  const baseSub = items.reduce((s, i) => s + i.amount, 0);
+
+  /* --- 设计与管理 --- */
+  const manage = baseSub * 0.06;
+  push('design', '工程管理费', `施工小计 ¥${fmt(baseSub)} × 6%`, manage);
+
+  if (p.design > 0){
+    push('design', '设计费', `${area}㎡ × ${p.design} 元`, area * p.design);
+  }
+
+  const waste = p.waste * (resale ? 1.6 : 1);
+  push('design', '垃圾清运与开荒保洁',
+    resale ? '固定费用 × 1.6（二手房上浮）' : '固定费用',
+    waste);
+
+  /* --- 主材 --- */
+  if (withMain){
+    const mt = area * 0.6;
+    push('main', '瓷砖', `${mt.toFixed(1)}㎡ × ${p.mTile} 元`, mt * p.mTile);
+
+    const fl = area * 0.35;
+    push('main', '地板', `${fl.toFixed(1)}㎡ × ${p.mFloor} 元`, fl * p.mFloor);
+
+    push('main', '橱柜', `3.2 延米 × ${p.mCabinet} 元`, 3.2 * p.mCabinet);
+
+    push('main', '卫浴洁具', `${baths} 套 × ${p.mBath} 元`, baths * p.mBath);
+
+    push('main', '室内门', `${doors} 樘 × ${p.mDoor} 元`, doors * p.mDoor);
+
+    push('main', '灯具开关', `${area}㎡ × ${p.mLight} 元`, area * p.mLight);
+  }
+
+  const total = items.reduce((s, i) => s + i.amount, 0);
+  const groups = Object.keys(GROUPS).map(k => ({
+    key: k,
+    ...GROUPS[k],
+    amount: items.filter(i => i.group === k).reduce((s, i) => s + i.amount, 0)
+  })).filter(g => g.amount > 0);
+
+  return {
+    items,
+    groups,
+    total,
+    low: Math.round(total * 0.88 / 100) * 100,
+    high: Math.round(total * 1.12 / 100) * 100,
+    unit: Math.round(total / area)
+  };
+}
+
+/* ---------- 格式化 ---------- */
+function fmt(n){ return Number(n).toLocaleString('zh-CN') }
+function money(n){ return '¥' + fmt(n) }
+
+/* ---------- 状态 ---------- */
+const state = { area:100, rooms:2, baths:1, grade:'mid', resale:false, withMain:true };
+
+/* ---------- 渲染结果 ---------- */
+function render(){
+  const r = calc(state);
+  const p = PRICE[state.grade];
+
+  document.getElementById('p-low').textContent = money(r.low);
+  document.getElementById('p-high').textContent = money(r.high);
+  document.getElementById('p-unit').textContent = '¥' + fmt(r.unit) + ' / ㎡';
+  document.getElementById('p-total').textContent = money(r.total);
+  document.getElementById('p-grade').textContent = p.label;
+  document.getElementById('p-main').textContent = state.withMain ? '含主材' : '不含主材';
+  document.getElementById('p-state').textContent = state.resale ? '二手房翻新' : '毛坯房';
+  document.getElementById('item-count').textContent = r.items.length + ' 项';
+
+  /* 占比条 + 图例 */
+  document.getElementById('share-bar').innerHTML = r.groups.map(g =>
+    `<div style="width:${(g.amount / r.total * 100).toFixed(2)}%;background:${g.color}"></div>`
+  ).join('');
+  document.getElementById('share-legend').innerHTML = r.groups.map(g =>
+    `<div><i style="background:${g.color}"></i>${g.label} ${money(g.amount)}（${(g.amount / r.total * 100).toFixed(0)}%）</div>`
+  ).join('');
+
+  /* 明细 */
+  const order = ['base','design','main'];
+  let html = '';
+  order.forEach(k => {
+    const list = r.items.filter(i => i.group === k);
+    if (!list.length) return;
+    const g = GROUPS[k];
+    html += `<div class="group-label"><span style="color:${g.color}">${g.label}</span></div>`;
+    html += list.map(i => `
+      <div class="row">
+        <div class="row-main">
+          <div class="row-name"><span class="row-dot" style="background:${g.color}"></span>${i.name}</div>
+          <div class="row-formula">${i.formula}</div>
+        </div>
+        <div class="row-amt">${money(i.amount)}<em>${(i.amount / r.total * 100).toFixed(1)}%</em></div>
+      </div>`).join('');
+  });
+  document.getElementById('detail-list').innerHTML = html;
+
+  /* 同步输入框显示 */
+  document.getElementById('v-area').textContent = state.area + ' ㎡';
+  const rg = document.getElementById('rg-area');
+  rg.value = state.area;
+  rg.style.setProperty('--pct', ((state.area - 20) / (400 - 20) * 100) + '%');
+}
+
+/* ---------- 交互绑定 ---------- */
+function bindTool(){
+
+  const inArea = document.getElementById('in-area');
+  const rgArea = document.getElementById('rg-area');
+  const areaLabel = document.getElementById('v-area');
+
+  /* 输入过程中不强行改写输入框内容，否则无法连续输入（如输入 150 中途被拉回 20） */
+  inArea.addEventListener('input', e => {
+    const raw = Number(e.target.value);
+    if (!raw || raw < 20) return;              // 交由 blur 时纠正
+    state.area = Math.min(400, Math.round(raw));
+    areaLabel.textContent = state.area + ' ㎡';
+    rgArea.value = state.area;
+    rgArea.style.setProperty('--pct', ((state.area - 20) / 380 * 100) + '%');
+    render();
+  });
+
+  /* 失焦时统一收敛到合法区间；留空则回退到上一次有效值 */
+  inArea.addEventListener('blur', () => {
+    const raw = Number(inArea.value);
+    const v = (!raw || raw < 20) ? state.area : Math.min(400, Math.round(raw));
+    state.area = v;
+    inArea.value = v;
+    render();
+  });
+
+  rgArea.addEventListener('input', e => {
+    state.area = Math.max(20, Math.min(400, Math.round(Number(e.target.value))));
+    inArea.value = state.area;
+    render();
+  });
+
+  /* 分段控件 */
+  const bindSeg = (id, key, cast) => {
+    const box = document.getElementById(id);
+    box.addEventListener('click', e => {
+      const b = e.target.closest('button[data-v]');
+      if (!b) return;
+      box.querySelectorAll('button').forEach(x => x.classList.remove('on'));
+      b.classList.add('on');
+      state[key] = cast ? cast(b.dataset.v) : b.dataset.v;
+      render();
+    });
+  };
+  bindSeg('seg-rooms', 'rooms', Number);
+  bindSeg('seg-baths', 'baths', Number);
+
+  /* 房屋状态 */
+  const segState = document.getElementById('seg-state');
+  segState.addEventListener('click', e => {
+    const b = e.target.closest('button[data-v]');
+    if (!b) return;
+    segState.querySelectorAll('button').forEach(x => x.classList.remove('on'));
+    b.classList.add('on');
+    state.resale = b.dataset.v === 'resale';
+    render();
+  });
+
+  /* 档次 */
+  const gradeGrid = document.getElementById('grade-grid');
+  gradeGrid.addEventListener('click', e => {
+    const b = e.target.closest('button[data-v]');
+    if (!b) return;
+    gradeGrid.querySelectorAll('button').forEach(x => x.classList.remove('on'));
+    b.classList.add('on');
+    state.grade = b.dataset.v;
+    render();
+  });
+
+  /* 主材开关 */
+  const sw = document.getElementById('sw-main');
+  sw.addEventListener('click', () => {
+    state.withMain = !state.withMain;
+    sw.classList.toggle('on', state.withMain);
+    render();
+  });
+
+  /* 复制明细 */
+  document.getElementById('btn-copy').addEventListener('click', async () => {
+    const r = calc(state);
+    const p = PRICE[state.grade];
+    const lines = [
+      '装修报价试算结果',
+      `面积 ${state.area}㎡ · ${state.rooms === 4 ? '四室+' : state.rooms + '室'}${state.baths}卫 · ${p.label} · ${state.resale ? '二手房翻新' : '毛坯房'} · ${state.withMain ? '含主材' : '不含主材'}`,
+      `估算区间 ${money(r.low)} ~ ${money(r.high)}（中值 ${money(r.total)}，折合 ¥${fmt(r.unit)}/㎡）`,
+      '',
+      ...r.items.map(i => `${i.name}：${money(i.amount)}　（${i.formula}）`)
+    ];
+    const text = lines.join('\n');
+    try{
+      await navigator.clipboard.writeText(text);
+      toast('明细已复制到剪贴板');
+    }catch{
+      const ta = document.createElement('textarea');
+      ta.value = text; document.body.appendChild(ta); ta.select();
+      document.execCommand('copy'); ta.remove();
+      toast('明细已复制到剪贴板');
+    }
+  });
+
+  document.getElementById('btn-print').addEventListener('click', () => window.print());
+}
+
+/* ---------- Toast ---------- */
+let toastTimer;
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+/* =========================================================
+   通用小工具函数
+   ========================================================= */
+const $id = id => document.getElementById(id);
+function fmtBytes(n){
+  if (n < 1024) return n + ' B';
+  if (n < 1024 * 1024) return (n / 1024).toFixed(1) + ' KB';
+  return (n / 1024 / 1024).toFixed(2) + ' MB';
+}
+function dlBlob(blob, name){
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
+}
+function esc(s){
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function baseName(name){
+  return name.replace(/\.[^.]+$/, '');
+}
+
+/* =========================================================
+   ① 图片压缩 / 格式转换
+   ========================================================= */
+let imgQueue = [];
+
+function viewImgCompress(){
+  return `
+  <div class="tool-wrap">
+    <div class="tool-panel">
+      <div class="tool-head">
+        <h2>图片压缩 / 格式转换</h2>
+        <p>支持 JPG、PNG、WebP 批量处理；图片始终留在你的浏览器里，不上传服务器。</p>
+      </div>
+
+      <div class="dropzone" id="dz">
+        <b>点击选择图片，或把图片拖进来</b>
+        <span>可多选 · 建议单张不超过 20MB</span>
+      </div>
+      <input type="file" id="fileInput" accept="image/*" multiple hidden>
+      <div class="file-list" id="fileList"></div>
+
+      <div class="field-2" style="margin-top:18px">
+        <div>
+          <div class="field-label"><span>输出格式</span></div>
+          <select class="ipt" id="optFormat">
+            <option value="keep">保持原格式</option>
+            <option value="image/jpeg">JPEG · 体积最小</option>
+            <option value="image/webp" selected>WebP · 推荐</option>
+            <option value="image/png">PNG · 无损</option>
+          </select>
+        </div>
+        <div>
+          <div class="field-label"><span>最大边长</span></div>
+          <select class="ipt" id="optMax">
+            <option value="0">不缩放</option>
+            <option value="2560">2560 px</option>
+            <option value="1920" selected>1920 px</option>
+            <option value="1280">1280 px</option>
+            <option value="800">800 px</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field" style="margin-top:16px">
+        <div class="field-label"><span>压缩质量</span><b id="qLabel">82%</b></div>
+        <input type="range" id="optQuality" min="40" max="95" step="1" value="82">
+        <div class="hint">仅对 JPEG / WebP 生效；PNG 压缩只靠缩放。</div>
+      </div>
+
+      <div class="row-actions">
+        <button class="btn btn-primary" id="btnRun">开始处理</button>
+        <button class="chip" id="btnClear">清空列表</button>
+      </div>
+    </div>
+
+    <div class="tool-panel" id="resultPanel" hidden>
+      <div class="metric-grid" id="sumGrid"></div>
+      <div class="file-list" id="outList" style="margin-top:14px"></div>
+      <div class="hint">逐个点击下载保存；若浏览器提示“允许多文件下载”，选择允许即可一次存完。</div>
+    </div>
+  </div>`;
+}
+
+function initImgCompress(){
+  const fileInput = $id('fileInput');
+  const dz = $id('dz');
+  const list = $id('fileList');
+  const q = $id('optQuality');
+  const qLabel = $id('qLabel');
+
+  const paint = () => {
+    list.innerHTML = imgQueue.map((f, i) => `
+      <div class="file-item">
+        <span class="fi-name">${esc(f.name)}</span>
+        <span class="fi-size">${fmtBytes(f.size)}</span>
+        <button class="chip" data-del="${i}" style="padding:3px 8px;font-size:11.5px">移除</button>
+      </div>`).join('');
+  };
+
+  const addFiles = files => {
+    [...files].filter(f => f.type.startsWith('image/')).forEach(f => imgQueue.push(f));
+    paint();
+  };
+
+  dz.addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', e => { addFiles(e.target.files); fileInput.value = ''; });
+  dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('over'); });
+  dz.addEventListener('dragleave', () => dz.classList.remove('over'));
+  dz.addEventListener('drop', e => {
+    e.preventDefault(); dz.classList.remove('over');
+    addFiles(e.dataTransfer.files);
+  });
+  list.addEventListener('click', e => {
+    const b = e.target.closest('[data-del]');
+    if (!b) return;
+    imgQueue.splice(Number(b.dataset.del), 1);
+    paint();
+  });
+  q.addEventListener('input', () => { qLabel.textContent = q.value + '%'; });
+  q.style.setProperty('--pct', ((q.value - 40) / 55 * 100) + '%');
+
+  $id('btnClear').addEventListener('click', () => {
+    imgQueue = [];
+    paint();
+    $id('resultPanel').hidden = true;
+    q.style.setProperty('--pct', ((q.value - 40) / 55 * 100) + '%');
+  });
+
+  $id('btnRun').addEventListener('click', async () => {
+    if (!imgQueue.length){ toast('请先选择图片'); return; }
+    const fmt = $id('optFormat').value;
+    const maxEdge = Number($id('optMax').value);
+    const quality = Number(q.value) / 100;
+    const btn = $id('btnRun');
+    btn.disabled = true; btn.textContent = '处理中…';
+
+    const outs = [];
+    for (const file of imgQueue){
+      try{
+        const bmp = await createImageBitmap(file);
+        let w = bmp.width, h = bmp.height;
+        if (maxEdge && Math.max(w, h) > maxEdge){
+          const r = maxEdge / Math.max(w, h);
+          w = Math.round(w * r); h = Math.round(h * r);
+        }
+        const cv = document.createElement('canvas');
+        cv.width = w; cv.height = h;
+        const ctx = cv.getContext('2d');
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(bmp, 0, 0, w, h);
+        bmp.close && bmp.close();
+
+        let type = fmt === 'keep' ? (file.type || 'image/jpeg') : fmt;
+        if (type === 'image/jpg') type = 'image/jpeg';
+        const blob = await new Promise(res => cv.toBlob(res, type, type === 'image/png' ? undefined : quality));
+        const ext = type === 'image/jpeg' ? 'jpg' : type === 'image/png' ? 'png' : type === 'image/webp' ? 'webp' : 'png';
+        outs.push({ name: baseName(file.name) + '.' + ext, blob, before: file.size, after: blob.size, w, h });
+      }catch(err){
+        outs.push({ name: file.name, error: true, before: file.size, after: 0 });
+      }
+    }
+
+    const before = outs.reduce((s, o) => s + o.before, 0);
+    const after = outs.reduce((s, o) => s + (o.after || 0), 0);
+    const save = before ? Math.max(0, Math.round((1 - after / before) * 100)) : 0;
+
+    $id('sumGrid').innerHTML = `
+      <div class="metric accent"><b>${save}%</b><span>整体体积减少</span></div>
+      <div class="metric"><b>${fmtBytes(before)}</b><span>处理前合计</span></div>
+      <div class="metric"><b>${fmtBytes(after)}</b><span>处理后合计</span></div>
+      <div class="metric"><b>${outs.length}</b><span>输出文件数</span></div>`;
+
+    $id('outList').innerHTML = outs.map((o, i) => o.error
+      ? `<div class="file-item"><span class="fi-name">${esc(o.name)}</span><span class="fi-tag bad">处理失败</span></div>`
+      : `<div class="file-item">
+           <span class="fi-name">${esc(o.name)}</span>
+           <span class="fi-size">${o.w}×${o.h} · ${fmtBytes(o.after)}</span>
+           <span class="fi-tag ok">-${Math.max(0, Math.round((1 - o.after / o.before) * 100))}%</span>
+           <button class="chip" data-dl="${i}" style="padding:3px 9px;font-size:11.5px">下载</button>
+         </div>`).join('');
+
+    $id('outList').onclick = e => {
+      const b = e.target.closest('[data-dl]');
+      if (!b) return;
+      const o = outs[Number(b.dataset.dl)];
+      if (o && o.blob) dlBlob(o.blob, o.name);
+    };
+
+    $id('resultPanel').hidden = false;
+    btn.disabled = false; btn.textContent = '开始处理';
+    toast(`已处理 ${outs.filter(o => !o.error).length} 张`);
+    q.style.setProperty('--pct', ((q.value - 40) / 55 * 100) + '%');
+  });
+}
+
+/* =========================================================
+   ② JSON 格式化
+   ========================================================= */
+function viewJson(){
+  return `
+  <div class="tool-wrap">
+    <div class="tool-panel">
+      <div class="tool-head">
+        <h2>JSON 格式化 / 校验</h2>
+        <p>格式化、压成一行、查错。解析在本地完成，接口数据不会外传。</p>
+      </div>
+      <textarea class="ta" id="jsonIn" spellcheck="false" placeholder='粘贴 JSON，例如：{"name":"工具矩阵","tools":18}'></textarea>
+      <div class="row-actions">
+        <button class="btn btn-primary" id="btnFormat">格式化</button>
+        <button class="chip" id="btnMinify">压成一行</button>
+        <button class="chip" id="btnSample">填个示例</button>
+        <button class="chip" id="btnCopyJson">复制结果</button>
+        <button class="chip" id="btnClearJson">清空</button>
+      </div>
+      <div class="hint" id="jsonStatus">等待输入…</div>
+      <textarea class="ta" id="jsonOut" spellcheck="false" readonly placeholder="结果会出现在这里"></textarea>
+    </div>
+  </div>`;
+}
+
+function initJson(){
+  const input = $id('jsonIn'), out = $id('jsonOut'), status = $id('jsonStatus');
+
+  const report = (ok, msg, cls) => {
+    status.innerHTML = msg;
+    status.style.color = cls === 'bad' ? '#b42318' : cls === 'ok' ? '#0a7a6b' : '';
+  };
+
+  const parse = () => {
+    const raw = input.value.trim();
+    if (!raw){ report(false, '等待输入…'); return null; }
+    try{
+      const data = JSON.parse(raw);
+      report(true, `<b style="color:#0a7a6b">✓ JSON 有效</b> · 原始 ${fmtBytes(new Blob([raw]).size)}`);
+      return data;
+    }catch(err){
+      const m = String(err.message);
+      const pos = m.match(/position (\d+)/);
+      const lc = m.match(/line (\d+) column (\d+)/);
+      let where = '';
+      if (lc) where = `第 ${lc[1]} 行第 ${lc[2]} 列`;
+      else if (pos){
+        const idx = Number(pos[1]);
+        const before = raw.slice(0, idx).split('\n');
+        where = `第 ${before.length} 行第 ${before[before.length - 1].length + 1} 列`;
+      }
+      report(false, `<b style="color:#b42318">✗ 格式错误</b>${where ? ' · ' + where : ''}<br>${esc(m)}`, 'bad');
+      return null;
+    }
+  };
+
+  input.addEventListener('input', () => { out.value = ''; parse(); });
+
+  $id('btnFormat').addEventListener('click', () => {
+    const data = parse();
+    if (data === null) return;
+    out.value = JSON.stringify(data, null, 2);
+  });
+
+  $id('btnMinify').addEventListener('click', () => {
+    const data = parse();
+    if (data === null) return;
+    out.value = JSON.stringify(data);
+  });
+
+  $id('btnSample').addEventListener('click', () => {
+    input.value = '{"site":"工具矩阵","tools":[{"id":"json","name":"JSON 格式化","live":true}],"count":24}';
+    parse();
+    out.value = JSON.stringify(JSON.parse(input.value), null, 2);
+  });
+
+  $id('btnCopyJson').addEventListener('click', async () => {
+    if (!out.value){ toast('还没有可复制的结果'); return; }
+    await copyText(out.value);
+  });
+
+  $id('btnClearJson').addEventListener('click', () => {
+    input.value = ''; out.value = '';
+    report(false, '等待输入…');
+  });
+}
+
+async function copyText(text){
+  try{
+    await navigator.clipboard.writeText(text);
+    toast('已复制到剪贴板');
+  }catch{
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); ta.remove();
+    toast('已复制到剪贴板');
+  }
+}
+
+/* =========================================================
+   ③ 字数 / 文本统计
+   ========================================================= */
+function viewTextStats(){
+  return `
+  <div class="tool-wrap">
+    <div class="tool-panel">
+      <div class="tool-head">
+        <h2>字数 / 文本统计</h2>
+        <p>边写边统计，适合公众号、商品详情、简历和自我校对。</p>
+      </div>
+      <textarea class="ta" id="statIn" placeholder="在这里粘贴或直接输入文字…"></textarea>
+      <div class="metric-grid" id="statGrid" style="margin-top:16px"></div>
+      <div style="margin-top:16px">
+        <div class="share-bar" id="statBar"></div>
+        <div class="share-legend" id="statLegend" style="padding:12px 0 0;border:0;background:none"></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function initTextStats(){
+  const ta = $id('statIn');
+  const grid = $id('statGrid');
+  const bar = $id('statBar');
+  const legend = $id('statLegend');
+
+  const run = () => {
+    const t = ta.value;
+    const noSpace = t.replace(/\s/g, '');
+    const cjk = (t.match(/[\u4e00-\u9fa5]/g) || []).length;
+    const words = (t.match(/[A-Za-z]+(?:['-][A-Za-z]+)*/g) || []).length;
+    const nums = (t.match(/\d+(?:\.\d+)?/g) || []).length;
+    const punct = (t.match(/[，。！？、；：""''（）《》,.!?;:()"]/g) || []).length;
+    const lines = t ? t.split('\n').length : 0;
+    const paras = t.split(/\n\s*\n/).filter(x => x.trim()).length;
+    const chars = t.length;
+    const minutes = Math.max(0, Math.ceil((cjk + words * 1.5) / 300));
+    const pct = n => chars ? (n / chars * 100) : 0;
+
+    grid.innerHTML = `
+      <div class="metric accent"><b>${cjk + words}</b><span>总字数（字 + 词）</span></div>
+      <div class="metric"><b>${chars}</b><span>字符数（含空格）</span></div>
+      <div class="metric"><b>${noSpace.length}</b><span>字符数（不含空格）</span></div>
+      <div class="metric"><b>${cjk}</b><span>汉字</span></div>
+      <div class="metric"><b>${words}</b><span>英文单词</span></div>
+      <div class="metric"><b>${nums}</b><span>数字串</span></div>
+      <div class="metric"><b>${lines}</b><span>行数</span></div>
+      <div class="metric"><b>${paras}</b><span>段落</span></div>
+      <div class="metric"><b>${minutes}</b><span>阅读时长（分钟）</span></div>`;
+
+    const parts = [
+      { k:'汉字', v:cjk, c:'#2563eb' },
+      { k:'英文', v:words, c:'#0d9488' },
+      { k:'数字', v:nums, c:'#e2610c' },
+      { k:'标点', v:punct, c:'#7c3aed' }
+    ];
+    const total = parts.reduce((s, x) => s + x.v, 0) || 1;
+    bar.innerHTML = parts.map(x => `<div style="width:${(x.v / total * 100).toFixed(2)}%;background:${x.c}"></div>`).join('');
+    legend.innerHTML = parts.map(x =>
+      `<div><i style="background:${x.c}"></i>${x.k} ${x.v}（${(x.v / total * 100).toFixed(0)}%）</div>`).join('');
+  };
+
+  ta.addEventListener('input', run);
+  run();
+}
+
+/* =========================================================
+   ④ 贷款月供试算
+   ========================================================= */
+function viewLoan(){
+  return `
+  <div class="tool-wrap">
+    <div class="tool-panel">
+      <div class="tool-head">
+        <h2>贷款月供试算</h2>
+        <p>对比等额本息与等额本金，看清月供、总利息和每一期还款结构。</p>
+      </div>
+      <div class="field-3">
+        <div>
+          <div class="field-label"><span>贷款金额</span><b id="lnAmtTxt">100 万</b></div>
+          <input class="ipt" id="lnAmt" type="number" value="100" min="1" max="5000" step="1">
+          <div class="hint">单位：万元</div>
+        </div>
+        <div>
+          <div class="field-label"><span>年利率</span></div>
+          <input class="ipt" id="lnRate" type="number" value="3.1" min="0" max="24" step="0.01">
+          <div class="hint">单位：%</div>
+        </div>
+        <div>
+          <div class="field-label"><span>贷款年限</span></div>
+          <select class="ipt" id="lnYears">
+            <option>5</option><option>10</option><option>15</option>
+            <option selected>20</option><option>25</option><option>30</option>
+          </select>
+          <div class="hint">等额本息常用 20-30 年</div>
+        </div>
+      </div>
+      <div class="field" style="margin-top:16px">
+        <div class="field-label"><span>还款方式</span></div>
+        <div class="seg" id="lnType">
+          <button data-v="eq" class="on">等额本息</button>
+          <button data-v="principal">等额本金</button>
+        </div>
+      </div>
+      <div class="hint" id="lnTip"></div>
+    </div>
+
+    <div class="tool-panel">
+      <div class="metric-grid" id="lnGrid"></div>
+      <div style="margin-top:18px">
+        <div class="field-label"><span>还款明细（前 12 期）</span><span class="field-hint" id="lnCount"></span></div>
+        <div style="overflow-x:auto">
+          <table class="tbl" id="lnTable"></table>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function initLoan(){
+  const amt = $id('lnAmt'), rate = $id('lnRate'), years = $id('lnYears');
+  let type = 'eq';
+
+  $id('lnType').addEventListener('click', e => {
+    const b = e.target.closest('button[data-v]');
+    if (!b) return;
+    $id('lnType').querySelectorAll('button').forEach(x => x.classList.remove('on'));
+    b.classList.add('on');
+    type = b.dataset.v;
+    run();
+  });
+
+  const run = () => {
+    const P = Math.max(0, Number(amt.value) || 0) * 10000;
+    const annual = Math.max(0, Number(rate.value) || 0) / 100;
+    const n = Number(years.value) * 12;
+    const i = annual / 12;
+    $id('lnAmtTxt').textContent = (P / 10000) + ' 万';
+
+    if (!P || !n){ $id('lnGrid').innerHTML = ''; $id('lnTable').innerHTML = ''; return; }
+
+    let rows = [], monthly = 0, totalInterest = 0, totalPay = 0, firstPay = 0;
+
+    if (type === 'eq'){
+      monthly = i === 0 ? P / n : P * i * Math.pow(1 + i, n) / (Math.pow(1 + i, n) - 1);
+      let rest = P;
+      for (let k = 1; k <= n; k++){
+        const interest = rest * i;
+        const principal = monthly - interest;
+        rest = Math.max(0, rest - principal);
+        totalInterest += interest;
+        rows.push({ k, pay: monthly, principal, interest, rest });
+      }
+      totalPay = P + totalInterest;
+      firstPay = monthly;
+      $id('lnTip').innerHTML = '等额本息：每月还款额固定，前期利息占比高，适合收入稳定、想好做预算的人。';
+    } else {
+      const principal = P / n;
+      let rest = P;
+      for (let k = 1; k <= n; k++){
+        const interest = rest * i;
+        const pay = principal + interest;
+        rest = Math.max(0, rest - principal);
+        totalInterest += interest;
+        rows.push({ k, pay, principal, interest, rest });
+        if (k === 1) firstPay = pay;
+      }
+      totalPay = P + totalInterest;
+      $id('lnTip').innerHTML = '等额本金：每月本金固定、月供逐月递减，总利息更少，但前期压力大。';
+    }
+
+    $id('lnGrid').innerHTML = `
+      <div class="metric accent"><b>${money(Math.round(type === 'eq' ? monthly : firstPay))}</b><span>${type === 'eq' ? '每月月供' : '首月月供'}</span></div>
+      <div class="metric"><b>${money(Math.round(totalInterest))}</b><span>总利息</span></div>
+      <div class="metric"><b>${money(Math.round(totalPay))}</b><span>还款总额</span></div>
+      <div class="metric"><b>${(totalInterest / P * 100).toFixed(1)}%</b><span>利息占本金</span></div>`;
+
+    $id('lnCount').textContent = `共 ${n} 期`;
+    $id('lnTable').innerHTML = `
+      <thead><tr><th>期数</th><th>月供</th><th>本金</th><th>利息</th><th>剩余本金</th></tr></thead>
+      <tbody>${rows.slice(0, 12).map(r => `
+        <tr><td>${r.k}</td><td>${money(Math.round(r.pay))}</td>
+        <td>${money(Math.round(r.principal))}</td><td>${money(Math.round(r.interest))}</td>
+        <td>${money(Math.round(r.rest))}</td></tr>`).join('')}</tbody>`;
+  };
+
+  [amt, rate].forEach(el => el.addEventListener('input', run));
+  years.addEventListener('change', run);
+  run();
+}
+
+/* =========================================================
+   ⑤ 个税计算器
+   ========================================================= */
+const TAX_BRACKETS = [
+  { limit: 3000,  rate: .03, quick: 0 },
+  { limit: 12000, rate: .10, quick: 210 },
+  { limit: 25000, rate: .20, quick: 1410 },
+  { limit: 35000, rate: .25, quick: 2660 },
+  { limit: 55000, rate: .30, quick: 4410 },
+  { limit: 80000, rate: .35, quick: 7160 },
+  { limit: Infinity, rate: .45, quick: 15160 }
+];
+
+function viewTax(){
+  return `
+  <div class="tool-wrap">
+    <div class="tool-panel">
+      <div class="tool-head">
+        <h2>个税计算器</h2>
+        <p>按综合所得月度预扣率表计算，输入社保和专项附加扣除后直接看税后收入。</p>
+      </div>
+      <div class="field-2">
+        <div>
+          <div class="field-label"><span>税前月收入</span><b id="taxSalaryTxt">¥15,000</b></div>
+          <input class="ipt" id="taxSalary" type="number" value="15000" min="0" step="100">
+        </div>
+        <div>
+          <div class="field-label"><span>五险一金（个人部分）</span></div>
+          <input class="ipt" id="taxSocial" type="number" value="1800" min="0" step="50">
+          <div class="hint">按你工资单上的个人扣款合计填写</div>
+        </div>
+      </div>
+      <div class="field-2" style="margin-top:14px">
+        <div>
+          <div class="field-label"><span>专项附加扣除</span></div>
+          <input class="ipt" id="taxExtra" type="number" value="0" min="0" step="100">
+          <div class="hint">子女教育、房贷、赡养老人等合计</div>
+        </div>
+        <div>
+          <div class="field-label"><span>其他扣除</span></div>
+          <input class="ipt" id="taxOther" type="number" value="0" min="0" step="100">
+          <div class="hint">企业年金、商业健康险等</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tool-panel">
+      <div class="metric-grid" id="taxGrid"></div>
+      <div style="margin-top:18px">
+        <table class="tbl" id="taxTable"></table>
+      </div>
+      <div class="hint">计算口径：应纳税所得额 = 月收入 − 5000 起征点 − 五险一金 − 专项附加扣除 − 其他扣除。结果为月度预扣估算，年度汇算清缴以税务部门为准。</div>
+    </div>
+  </div>`;
+}
+
+function initTax(){
+  const salary = $id('taxSalary'), social = $id('taxSocial'),
+        extra = $id('taxExtra'), other = $id('taxOther');
+
+  const run = () => {
+    const s = Math.max(0, Number(salary.value) || 0);
+    $id('taxSalaryTxt').textContent = money(s);
+    const base = Math.max(0, s - 5000 - (Number(social.value) || 0) - (Number(extra.value) || 0) - (Number(other.value) || 0));
+    const b = TAX_BRACKETS.find(x => base <= x.limit) || TAX_BRACKETS[TAX_BRACKETS.length - 1];
+    const tax = Math.max(0, base * b.rate - b.quick);
+    const net = s - (Number(social.value) || 0) - tax;
+    const burden = s ? tax / s * 100 : 0;
+
+    $id('taxGrid').innerHTML = `
+      <div class="metric accent"><b>${money(Math.round(net))}</b><span>税后到手 / 月</span></div>
+      <div class="metric"><b>${money(Math.round(tax))}</b><span>本月个税</span></div>
+      <div class="metric"><b>${money(Math.round(base))}</b><span>应纳税所得额</span></div>
+      <div class="metric"><b>${(b.rate * 100).toFixed(0)}%</b><span>适用税率</span></div>
+      <div class="metric"><b>${burden.toFixed(1)}%</b><span>个税占收入</span></div>
+      <div class="metric"><b>${money(Math.round(net * 12))}</b><span>税后年收入估算</span></div>`;
+
+    $id('taxTable').innerHTML = `
+      <thead><tr><th>项目</th><th>金额 / 比例</th></tr></thead>
+      <tbody>
+        <tr><td>税前月收入</td><td>${money(s)}</td></tr>
+        <tr><td>减：起征点</td><td>−${money(5000)}</td></tr>
+        <tr><td>减：五险一金</td><td>−${money(Number(social.value) || 0)}</td></tr>
+        <tr><td>减：专项附加扣除</td><td>−${money(Number(extra.value) || 0)}</td></tr>
+        <tr><td>减：其他扣除</td><td>−${money(Number(other.value) || 0)}</td></tr>
+        <tr><td><b>应纳税所得额</b></td><td><b>${money(Math.round(base))}</b></td></tr>
+        <tr><td>适用税率 / 速算扣除数</td><td>${(b.rate * 100).toFixed(0)}% / ${money(b.quick)}</td></tr>
+        <tr><td><b>本月应缴个税</b></td><td><b>${money(Math.round(tax))}</b></td></tr>
+      </tbody>`;
+  };
+
+  [salary, social, extra, other].forEach(el => el.addEventListener('input', run));
+  run();
+}
+
+/* =========================================================
+   ⑥ 单位换算
+   ========================================================= */
+const UNIT_SETS = {
+  length: { label:'长度', base:'m', units:{ 'mm':.001, 'cm':.01, 'm':1, 'km':1000, '英寸':.0254, '英尺':.3048, '码':.9144, '市尺':1/3, '市里':500 } },
+  area:   { label:'面积', base:'㎡', units:{ '㎡':1, '平方厘米':.0001, '公顷':10000, '亩':666.6667, '坪':3.305785, '平方英尺':.092903 } },
+  weight: { label:'重量', base:'kg', units:{ 'g':.001, 'kg':1, '吨':1000, '斤':.5, '两':.05, '磅':.453592, '盎司':.0283495 } },
+  volume: { label:'体积', base:'L', units:{ 'ml':.001, 'L':1, '立方米':1000, '加仑(US)':3.785412, '立方英尺':28.31685 } },
+  temp:   { label:'温度', base:'℃', units:{ '℃':1, '℉':1, 'K':1 } },
+  data:   { label:'数据', base:'MB', units:{ 'B':1/1048576, 'KB':1/1024, 'MB':1, 'GB':1024, 'TB':1048576 } }
+};
+
+function viewUnit(){
+  return `
+  <div class="tool-wrap">
+    <div class="tool-panel">
+      <div class="tool-head">
+        <h2>单位换算</h2>
+        <p>长度、面积、重量、体积、温度、数据量，装修量房和日常都用得上。</p>
+      </div>
+      <div class="field">
+        <div class="field-label"><span>换算类型</span></div>
+        <div class="chip-row" id="unitCats"></div>
+      </div>
+      <div class="field-3" style="align-items:end">
+        <div>
+          <div class="field-label"><span>数值</span></div>
+          <input class="ipt" id="unitVal" type="number" value="1" step="any">
+        </div>
+        <div>
+          <div class="field-label"><span>从</span></div>
+          <select class="ipt" id="unitFrom"></select>
+        </div>
+        <div>
+          <div class="field-label"><span>到</span></div>
+          <select class="ipt" id="unitTo"></select>
+        </div>
+      </div>
+      <div class="metric accent" style="margin-top:18px">
+        <b id="unitResult">—</b><span id="unitLabel">换算结果</span>
+      </div>
+      <div style="margin-top:18px">
+        <div class="field-label"><span>该类别全部换算</span></div>
+        <table class="tbl" id="unitTable"></table>
+      </div>
+    </div>
+  </div>`;
+}
+
+function initUnit(){
+  let cat = 'length';
+  const cats = $id('unitCats'), from = $id('unitFrom'), to = $id('unitTo'), val = $id('unitVal');
+
+  const paintCats = () => {
+    cats.innerHTML = Object.keys(UNIT_SETS).map(k =>
+      `<button class="chip" data-cat="${k}" style="${k === cat ? 'background:#eff5ff;color:#2563eb;border-color:#c9dbf8' : ''}">${UNIT_SETS[k].label}</button>`).join('');
+  };
+
+  const paintUnits = () => {
+    const opts = Object.keys(UNIT_SETS[cat].units).map(u => `<option>${u}</option>`).join('');
+    from.innerHTML = opts; to.innerHTML = opts;
+    from.selectedIndex = 0;
+    to.selectedIndex = Math.min(1, Object.keys(UNIT_SETS[cat].units).length - 1);
+  };
+
+  const run = () => {
+    const v = Number(val.value) || 0;
+    const one = (u) => {
+      // 单一单位换算：先统一到基准，再转目标
+      let base;
+      if (cat === 'temp'){
+        if (from.value === '℃') base = v;
+        else if (from.value === '℉') base = (v - 32) * 5 / 9;
+        else base = v - 273.15;
+        if (u === '℃') return base;
+        if (u === '℉') return base * 9 / 5 + 32;
+        return base + 273.15;
+      }
+      base = v * UNIT_SETS[cat].units[from.value];
+      return base / UNIT_SETS[cat].units[u];
+    };
+
+    const r = one(to.value);
+    const digits = Math.abs(r) >= 1000 ? 2 : 4;
+    $id('unitResult').textContent = Number(r.toFixed(digits)).toLocaleString('zh-CN');
+    $id('unitLabel').textContent = `${val.value || 0} ${from.value} = ${$id('unitResult').textContent} ${to.value}`;
+
+    $id('unitTable').innerHTML = `
+      <thead><tr><th>单位</th><th>数值</th></tr></thead>
+      <tbody>${Object.keys(UNIT_SETS[cat].units).map(u => {
+        const x = one(u);
+        return `<tr><td>${u}</td><td>${Number(x.toFixed(6)).toLocaleString('zh-CN')}</td></tr>`;
+      }).join('')}</tbody>`;
+  };
+
+  cats.addEventListener('click', e => {
+    const b = e.target.closest('[data-cat]');
+    if (!b) return;
+    cat = b.dataset.cat;
+    paintCats(); paintUnits(); run();
+  });
+
+  [val, from, to].forEach(el => el.addEventListener('input', run));
+  from.addEventListener('change', run); to.addEventListener('change', run);
+
+  paintCats(); paintUnits(); run();
+}
+
+/* =========================================================
+   ⑦ AI 文本摘要（本地抽取式，不联网）
+   ========================================================= */
+function viewAiSummary(){
+  return `
+  <div class="tool-wrap">
+    <div class="tool-panel">
+      <div class="tool-head">
+        <h2>AI 文本摘要</h2>
+        <p>长文、会议记录、报告粘进来，自动挑出最关键的几句。全部在本机计算，不联网、不上传。</p>
+      </div>
+      <textarea class="ta" id="sumIn" placeholder="粘贴需要摘要的文本，建议 300 字以上效果更好…"></textarea>
+      <div class="field" style="margin-top:16px">
+        <div class="field-label"><span>摘要长度</span></div>
+        <div class="seg" id="sumLen">
+          <button data-v="0.15">短 · 抓结论</button>
+          <button data-v="0.3" class="on">中 · 抓重点</button>
+          <button data-v="0.5">长 · 保留细节</button>
+        </div>
+      </div>
+      <div class="row-actions">
+        <button class="btn btn-primary" id="btnSum">生成摘要</button>
+        <button class="chip" id="btnSumSample">填个示例</button>
+        <button class="chip" id="btnSumCopy">复制摘要</button>
+      </div>
+      <div class="hint">算法：句向量化的 TextRank 变体（词频 + 位置 + 长度惩罚），抽取原文句子，不做改写。适合快速抓重点，不适合替代人工编辑。</div>
+    </div>
+
+    <div class="tool-panel" id="sumPanel" hidden>
+      <div class="metric-grid" id="sumGrid"></div>
+      <div id="sumOut" style="margin-top:16px;line-height:1.9;font-size:14.5px"></div>
+    </div>
+  </div>`;
+}
+
+function initAiSummary(){
+  const input = $id('sumIn');
+  let ratio = 0.3;
+
+  $id('sumLen').addEventListener('click', e => {
+    const b = e.target.closest('button[data-v]');
+    if (!b) return;
+    $id('sumLen').querySelectorAll('button').forEach(x => x.classList.remove('on'));
+    b.classList.add('on');
+    ratio = Number(b.dataset.v);
+  });
+
+  const splitSentences = t => {
+    const parts = t.replace(/\s+/g, ' ').match(/[^。！？!?；;\n]+[。！？!?；;]?/g) || [];
+    return parts.map(s => s.trim()).filter(s => s.length >= 8);
+  };
+
+  const summarize = (text, ratio) => {
+    const sents = splitSentences(text);
+    if (sents.length <= 2) return { picked: sents, sents };
+
+    // 词频表：中文按二元组，英文按单词
+    const freq = Object.create(null);
+    const tokenize = s => {
+      const out = [];
+      const cjk = s.match(/[\u4e00-\u9fa5]+/g) || [];
+      cjk.forEach(run => {
+        for (let i = 0; i < run.length - 1; i++) out.push(run.slice(i, i + 2));
+        if (run.length === 1) out.push(run);
+      });
+      (s.match(/[A-Za-z]{2,}/g) || []).forEach(w => out.push(w.toLowerCase()));
+      return out;
+    };
+    sents.forEach(s => tokenize(s).forEach(w => { freq[w] = (freq[w] || 0) + 1; }));
+
+    const scored = sents.map((s, idx) => {
+      const ws = tokenize(s);
+      const base = ws.reduce((sum, w) => sum + (freq[w] || 0), 0) / Math.sqrt(ws.length || 1);
+      const posBonus = idx === 0 ? 1.45 : idx === 1 ? 1.18 : 1;   // 开头句多是主题句
+      const lenPenalty = s.length > 90 ? 0.82 : s.length < 15 ? 0.9 : 1;
+      return { s, idx, ws, score: base * posBonus * lenPenalty };
+    });
+
+    const jaccard = (a, b) => {
+      const A = new Set(a), B = new Set(b);
+      if (!A.size || !B.size) return 0;
+      let inter = 0;
+      A.forEach(x => { if (B.has(x)) inter++; });
+      return inter / (A.size + B.size - inter);
+    };
+
+    const k = Math.max(3, Math.min(10, Math.round(sents.length * ratio)));
+    const pool = [...scored].sort((a, b) => b.score - a.score);
+    const picked = [];
+    while (picked.length < k && picked.length < pool.length){
+      let best = null, bestScore = -Infinity;
+      for (const c of pool){
+        if (picked.includes(c)) continue;
+        const sim = picked.length ? Math.max(...picked.map(x => jaccard(c.ws, x.ws))) : 0;
+        const adj = c.score * (1 - 0.55 * sim);   // MMR：避免选到重复内容
+        if (adj > bestScore){ bestScore = adj; best = c; }
+      }
+      if (!best) break;
+      picked.push(best);
+    }
+    picked.sort((a, b) => a.idx - b.idx);
+    return { picked, sents };
+  };
+
+  $id('btnSum').addEventListener('click', () => {
+    const text = input.value.trim();
+    if (text.length < 30){ toast('文本太短，至少 30 字'); return; }
+    const { picked, sents } = summarize(text, ratio);
+    const body = picked.map(p => p.s).join('');
+    const cut = Math.round((1 - body.length / text.length) * 100);
+
+    $id('sumGrid').innerHTML = `
+      <div class="metric accent"><b>${picked.length}</b><span>选中句数</span></div>
+      <div class="metric"><b>${text.length}</b><span>原文字数</span></div>
+      <div class="metric"><b>${body.length}</b><span>摘要字数</span></div>
+      <div class="metric"><b>${cut}%</b><span>压缩比</span></div>
+      <div class="metric"><b>${sents.length}</b><span>原文句数</span></div>`;
+
+    $id('sumOut').innerHTML = picked.map(p =>
+      `<p style="margin:0 0 10px;padding-left:12px;border-left:3px solid #7c3aed">${esc(p.s)}</p>`).join('');
+    $id('sumPanel').hidden = false;
+    $id('btnSumCopy').dataset.text = body;
+  });
+
+  $id('btnSumCopy').addEventListener('click', e => {
+    const t = e.currentTarget.dataset.text;
+    if (!t){ toast('请先生成摘要'); return; }
+    copyText(t);
+  });
+
+  $id('btnSumSample').addEventListener('click', () => {
+    input.value = '装修预算超支是业主最常见的问题。多数超支并不是因为单价高，而是因为漏项和后期增项。'
+      + '一份合格的报价单应当把拆改、水电、防水、泥瓦、木作、油漆、安装、主材、管理费和垃圾清运全部列清楚。'
+      + '很多装修公司会在报价时故意省略防水高度、墙面找平、成品保护等小项，等到施工中再以增项名义加价。'
+      + '另一个常见问题是重复计价，比如瓷砖铺贴已经把辅料算进单价，却又单列一条辅料费。'
+      + '业主在签约前应当逐条核对项目特征描述，确认品牌、规格、工艺和验收标准。'
+      + '对于水电改造这种按实结算的项目，应约定单价上限和总价浮动比例，避免完工后金额翻倍。'
+      + '如果预算有限，优先保证水电、防水、基层处理这些隐蔽工程，减少后期返工风险。';
+    toast('已填入示例，点“生成摘要”试试');
+  });
+}
+
+/* =========================================================
+   第三方库懒加载（按需，不拖慢首页）
+   ========================================================= */
+const LIB_SRC = {
+  qr:   { local:'vendor/qrcode.js',        cdn:'https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js' },
+  pdf:  { local:'vendor/pdf-lib.min.js',   cdn:'https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js' },
+  yaml: { local:'vendor/js-yaml.min.js',   cdn:'https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js' },
+  csv:  { local:'vendor/papaparse.min.js', cdn:'https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js' },
+  md:   { local:'vendor/marked.min.js',    cdn:'https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js' }
+};
+const libLoaded = {};
+function ensureLib(key){
+  if (libLoaded[key]) return libLoaded[key];
+  libLoaded[key] = new Promise((resolve, reject) => {
+    const load = (src, retry) => {
+      const sc = document.createElement('script');
+      sc.src = src;
+      sc.async = true;
+      sc.onload = () => resolve(key);
+      sc.onerror = () => {
+        sc.remove();
+        const cdn = LIB_SRC[key].cdn;
+        if (!retry && cdn && src !== cdn) load(cdn, true);
+        else reject(new Error('组件加载失败，请检查网络后重试'));
+      };
+      document.head.appendChild(sc);
+    };
+    load(LIB_SRC[key].local, false);
+  });
+  return libLoaded[key];
+}
+
+/* =========================================================
+   ⑧ 二维码生成（qrcode-generator · MIT）
+   ========================================================= */
+function viewQr(){
+  return `
+  <div class="tool-wrap">
+    <div class="tool-panel">
+      <div class="tool-head">
+        <h2>二维码生成器</h2>
+        <p>网址、文本、联系方式都能生成二维码。编码在本机完成，扫码内容不经过任何服务器。</p>
+      </div>
+      <div class="field">
+        <div class="field-label"><span>内容</span><span class="field-hint" id="qrCount">0 字符</span></div>
+        <textarea class="ta sm" id="qrText" placeholder="输入网址或文字，例如 https://liujiaxu.dpdns.org">https://liujiaxu.dpdns.org</textarea>
+      </div>
+      <div class="field-3">
+        <div>
+          <div class="field-label"><span>容错级别</span></div>
+          <select class="ipt" id="qrEc">
+            <option value="L">L · 7%（内容长优先）</option>
+            <option value="M" selected>M · 15%（常用）</option>
+            <option value="Q">Q · 25%</option>
+            <option value="H">H · 30%（可加 logo）</option>
+          </select>
+        </div>
+        <div>
+          <div class="field-label"><span>尺寸</span></div>
+          <select class="ipt" id="qrSize">
+            <option value="256">256 px</option>
+            <option value="512" selected>512 px</option>
+            <option value="1024">1024 px</option>
+          </select>
+        </div>
+        <div>
+          <div class="field-label"><span>颜色</span></div>
+          <div class="swatch">
+            <input type="color" id="qrFg" value="#0c1524">
+            <input type="color" id="qrBg" value="#ffffff">
+          </div>
+        </div>
+      </div>
+      <div class="row-actions">
+        <button class="btn btn-primary" id="btnQr">生成二维码</button>
+        <button class="chip" id="btnQrDl">下载 PNG</button>
+      </div>
+      <div class="hint" id="qrTip">提示：内容越长，二维码越密；建议控制在 200 字符内，扫码更快。</div>
+    </div>
+
+    <div class="tool-panel" id="qrPanel" hidden>
+      <div class="qr-box" id="qrBox"></div>
+      <div class="hint" id="qrInfo"></div>
+    </div>
+  </div>`;
+}
+
+function initQr(){
+  let canvas = null;
+
+  const draw = () => {
+    const text = $id('qrText').value.trim();
+    $id('qrCount').textContent = text.length + ' 字符';
+    if (!text){ $id('qrPanel').hidden = true; return; }
+
+    try{
+      const ec = $id('qrEc').value;
+      const qr = qrcode(0, ec);
+      qr.addData(text, 'Byte');
+      qr.make();
+      const n = qr.getModuleCount();
+      const size = Number($id('qrSize').value);
+      const scale = Math.max(1, Math.floor(size / (n + 8)));
+      const px = (n + 8) * scale;
+
+      canvas = document.createElement('canvas');
+      canvas.width = canvas.height = px;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = $id('qrBg').value;
+      ctx.fillRect(0, 0, px, px);
+      ctx.fillStyle = $id('qrFg').value;
+      const pad = 4 * scale;
+      for (let r = 0; r < n; r++) for (let c = 0; c < n; c++)
+        if (qr.isDark(r, c)) ctx.fillRect(pad + c * scale, pad + r * scale, scale, scale);
+
+      $id('qrBox').innerHTML = '';
+      ctx.canvas.style.width = Math.min(size, 420) + 'px';
+      $id('qrBox').appendChild(canvas);
+      $id('qrPanel').hidden = false;
+      $id('qrInfo').innerHTML = `版本 ${(n - 17) / 4} · 矩阵 ${n}×${n} · 容错 ${ec} · 实际 ${px}px`;
+      $id('qrTip').textContent = '提示：内容越长，二维码越密；建议控制在 200 字符内，扫码更快。';
+      $id('qrTip').style.color = '';
+    }catch(err){
+      $id('qrPanel').hidden = true;
+      $id('qrTip').textContent = '内容太长或字符无法编码：' + err.message;
+      $id('qrTip').style.color = '#b42318';
+    }
+  };
+
+  $id('btnQr').addEventListener('click', draw);
+  ['qrText', 'qrEc', 'qrSize', 'qrFg', 'qrBg'].forEach(id => {
+    const el = $id(id);
+    el.addEventListener(el.tagName === 'SELECT' || el.type === 'color' ? 'change' : 'input', draw);
+  });
+
+  $id('btnQrDl').addEventListener('click', () => {
+    if (!canvas){ toast('请先生成二维码'); return; }
+    canvas.toBlob(b => dlBlob(b, 'qrcode.png'), 'image/png');
+  });
+
+  draw();
+}
+
+/* =========================================================
+   ⑨ JSON ↔ YAML（js-yaml · MIT）
+   ========================================================= */
+function viewYaml(){
+  return `
+  <div class="tool-wrap">
+    <div class="tool-panel">
+      <div class="tool-head">
+        <h2>JSON ↔ YAML 转换</h2>
+        <p>配置文件互转，缩进、类型、报错位置都会保留。数据只在本地解析。</p>
+      </div>
+      <div class="field">
+        <div class="field-label"><span>转换方向</span></div>
+        <div class="seg" id="yamlDir">
+          <button data-v="y2j" class="on">YAML → JSON</button>
+          <button data-v="j2y">JSON → YAML</button>
+        </div>
+      </div>
+      <textarea class="ta" id="yamlIn" spellcheck="false" placeholder="name: 工具矩阵&#10;tools:&#10;  - id: qr&#10;    live: true"></textarea>
+      <div class="row-actions">
+        <button class="btn btn-primary" id="btnYaml">转换</button>
+        <button class="chip" id="btnYamlSample">填示例</button>
+        <button class="chip" id="btnYamlCopy">复制结果</button>
+      </div>
+      <div class="hint" id="yamlStatus">等待输入…</div>
+      <textarea class="ta" id="yamlOut" spellcheck="false" readonly placeholder="转换结果"></textarea>
+    </div>
+  </div>`;
+}
+
+function initYaml(){
+  let dir = 'y2j';
+  $id('yamlDir').addEventListener('click', e => {
+    const b = e.target.closest('button[data-v]');
+    if (!b) return;
+    $id('yamlDir').querySelectorAll('button').forEach(x => x.classList.remove('on'));
+    b.classList.add('on');
+    dir = b.dataset.v;
+    $id('yamlIn').placeholder = dir === 'y2j'
+      ? 'name: 工具矩阵\ntools:/n  - id: qr\n    live: true'
+      : '{"name":"工具矩阵","tools":[{"id":"qr","live":true}]}';
+  });
+
+  const run = () => {
+    const Y = window.jsyaml;
+    const src = $id('yamlIn').value.trim();
+    const out = $id('yamlOut'), st = $id('yamlStatus');
+    if (!src){ st.textContent = '等待输入…'; return; }
+    try{
+      if (dir === 'y2j'){
+        const obj = Y.load(src);
+        out.value = JSON.stringify(obj, null, 2);
+      } else {
+        out.value = Y.dump(JSON.parse(src), { indent: 2, lineWidth: 100, noRefs: true });
+      }
+      st.innerHTML = '<b style="color:#0a7a6b">✓ 转换成功</b> · 输入 ' + src.length + ' 字符';
+    }catch(err){
+      out.value = '';
+      st.innerHTML = '<b style="color:#b42318">✗ 解析失败</b><br>' + esc(err.message);
+    }
+  };
+
+  $id('btnYaml').addEventListener('click', run);
+  $id('btnYamlCopy').addEventListener('click', () => {
+    if (!$id('yamlOut').value){ toast('还没有可复制的结果'); return; }
+    copyText($id('yamlOut').value);
+  });
+  $id('btnYamlSample').addEventListener('click', () => {
+    $id('yamlIn').value = dir === 'y2j'
+      ? 'name: 工具矩阵\ntools:/n  - id: qr\n    status: live\n  - id: pdf-merge\n    status: live'
+      : '{"name":"工具矩阵","tools":[{"id":"qr","status":"live"}]}';
+    run();
+  });
+}
+
+/* =========================================================
+   ⑩ CSV 转 JSON / 表格预览（PapaParse · MIT）
+   ========================================================= */
+function viewCsv(){
+  return `
+  <div class="tool-wrap">
+    <div class="tool-panel">
+      <div class="tool-head">
+        <h2>CSV 转 JSON / 表格预览</h2>
+        <p>表格数据粘进来直接看结构，一键转成 JSON。逗号、分号、制表符会自动识别。</p>
+      </div>
+      <textarea class="ta" id="csvIn" spellcheck="false" placeholder="name,area,price&#10;瓷砖,90,98&#10;地板,45,175"></textarea>
+      <div class="row-actions">
+        <button class="btn btn-primary" id="btnCsv">解析</button>
+        <button class="chip" id="btnCsvSample">填示例</button>
+        <button class="chip" id="btnCsvCopy">复制 JSON</button>
+        <label class="chip" style="display:inline-flex;align-items:center;cursor:pointer">
+          选择 CSV 文件
+          <input type="file" id="csvFile" accept=".csv,.txt,text/csv" hidden>
+        </label>
+      </div>
+      <div class="hint" id="csvStatus">等待输入…</div>
+    </div>
+
+    <div class="tool-panel" id="csvPanel" hidden>
+      <div class="field-label"><span>表格预览（前 20 行）</span></div>
+      <div style="overflow-x:auto"><table class="tbl" id="csvTable"></table></div>
+      <div class="field-label" style="margin-top:18px"><span>JSON 输出</span></div>
+      <textarea class="ta" id="csvOut" spellcheck="false" readonly></textarea>
+    </div>
+  </div>`;
+}
+
+function initCsv(){
+  let lastJson = '';
+
+  const run = (raw) => {
+    const src = raw !== undefined ? raw : $id('csvIn').value;
+    if (!src.trim()){ $id('csvStatus').textContent = '等待输入…'; return; }
+    const res = Papa.parse(src.trim(), { header: true, skipEmptyLines: true, dynamicTyping: false });
+    const rows = res.data, fields = res.meta.fields || [];
+
+    if (!fields.length){
+      $id('csvStatus').innerHTML = '<b style="color:#b42318">✗ 没识别到表头</b>，请确认第一行是列名';
+      return;
+    }
+
+    $id('csvTable').innerHTML =
+      '<thead><tr>' + fields.map(f => `<th>${esc(f)}</th>`).join('') + '</tr></thead>' +
+      '<tbody>' + rows.slice(0, 20).map(r =>
+        '<tr>' + fields.map(f => `<td>${esc(r[f] ?? '')}</td>`).join('') + '</tr>').join('') + '</tbody>';
+
+    lastJson = JSON.stringify(rows, null, 2);
+    $id('csvOut').value = lastJson;
+    $id('csvPanel').hidden = false;
+    $id('csvStatus').innerHTML = `<b style="color:#0a7a6b">✓ 解析成功</b> · ${rows.length} 行 × ${fields.length} 列`
+      + (res.errors.length ? ` · ${res.errors.length} 处格式提示` : '');
+  };
+
+  $id('btnCsv').addEventListener('click', () => run());
+  $id('btnCsvSample').addEventListener('click', () => {
+    $id('csvIn').value = 'name,area,price\n瓷砖,90,98\n地板,45,175\n乳胶漆,260,36';
+    run();
+  });
+  $id('btnCsvCopy').addEventListener('click', () => {
+    if (!lastJson){ toast('请先解析'); return; }
+    copyText(lastJson);
+  });
+  $id('csvFile').addEventListener('change', e => {
+    const f = e.target.files[0];
+    if (!f) return;
+    const reader = new FileReader();
+    reader.onload = () => { $id('csvIn').value = String(reader.result).slice(0, 200000); run(); };
+    reader.readAsText(f, 'utf-8');
+    e.target.value = '';
+  });
+}
+
+/* =========================================================
+   ⑪ PDF 合并（pdf-lib · MIT）
+   ========================================================= */
+let pdfQueue = [];
+
+function viewPdfMerge(){
+  return `
+  <div class="tool-wrap">
+    <div class="tool-panel">
+      <div class="tool-head">
+        <h2>PDF 合并</h2>
+        <p>多个 PDF 按顺序合成一个。文件只在浏览器里处理，不上传服务器。</p>
+      </div>
+      <div class="dropzone" id="pdfDz">
+        <b>点击选择 PDF，或把文件拖进来</b>
+        <span>可多选 · 按列表顺序合并 · 支持加密以外的一般文件</span>
+      </div>
+      <input type="file" id="pdfInput" accept="application/pdf,.pdf" multiple hidden>
+      <div class="file-list" id="pdfList"></div>
+      <div class="row-actions">
+        <button class="btn btn-primary" id="btnPdf">合并并下载</button>
+        <button class="chip" id="btnPdfClear">清空</button>
+      </div>
+      <div class="hint" id="pdfStatus">最多建议 20 个文件、总大小 100MB 以内。</div>
+    </div>
+  </div>`;
+}
+
+function initPdfMerge(){
+  const input = $id('pdfInput'), dz = $id('pdfDz'), list = $id('pdfList');
+
+  const paint = () => {
+    list.innerHTML = pdfQueue.map((f, i) => `
+      <div class="file-item">
+        <span class="fi-name">${esc(f.name)}</span>
+        <span class="fi-size">${f.pages != null ? f.pages + ' 页 · ' : ''}${fmtBytes(f.size)}</span>
+        <button class="chip" data-del="${i}" style="padding:3px 8px;font-size:11.5px">移除</button>
+      </div>`).join('');
+  };
+
+  const add = async files => {
+    for (const f of [...files]){
+      if (!/pdf$/i.test(f.name) && f.type !== 'application/pdf') continue;
+      const item = { name: f.name, size: f.size, file: f, pages: null };
+      pdfQueue.push(item);
+      paint();
+      try{
+        const buf = await f.arrayBuffer();
+        const doc = await PDFLib.PDFDocument.load(buf, { ignoreEncryption: true });
+        item.pages = doc.getPageCount();
+        paint();
+      }catch(e){ item.pages = -1; paint(); }
+    }
+  };
+
+  dz.addEventListener('click', () => input.click());
+  input.addEventListener('change', e => { add(e.target.files); input.value = ''; });
+  dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('over'); });
+  dz.addEventListener('dragleave', () => dz.classList.remove('over'));
+  dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('over'); add(e.dataTransfer.files); });
+  list.addEventListener('click', e => {
+    const b = e.target.closest('[data-del]');
+    if (!b) return;
+    pdfQueue.splice(Number(b.dataset.del), 1);
+    paint();
+  });
+  $id('btnPdfClear').addEventListener('click', () => { pdfQueue = []; paint(); });
+
+  $id('btnPdf').addEventListener('click', async () => {
+    if (pdfQueue.length < 2){ toast('至少选择 2 个 PDF'); return; }
+    const btn = $id('btnPdf');
+    btn.disabled = true; btn.textContent = '合并中…';
+    $id('pdfStatus').textContent = '正在处理，请稍候…';
+    try{
+      const out = await PDFLib.PDFDocument.create();
+      let total = 0;
+      for (const item of pdfQueue){
+        const buf = await item.file.arrayBuffer();
+        const doc = await PDFLib.PDFDocument.load(buf, { ignoreEncryption: true });
+        const pages = await out.copyPages(doc, doc.getPageIndices());
+        pages.forEach(p => out.addPage(p));
+        total += doc.getPageCount();
+      }
+      const bytes = await out.save();
+      dlBlob(new Blob([bytes], { type: 'application/pdf' }), 'merged.pdf');
+      $id('pdfStatus').innerHTML = `<b style="color:#0a7a6b">✓ 合并完成</b> · ${pdfQueue.length} 个文件 → ${total} 页 · ${fmtBytes(bytes.length)}`;
+    }catch(err){
+      $id('pdfStatus').innerHTML = `<b style="color:#b42318">✗ 合并失败</b><br>${esc(err.message)}`;
+    }
+    btn.disabled = false; btn.textContent = '合并并下载';
+  });
+}
+
+/* =========================================================
+   ⑫ Markdown 预览（marked · MIT）
+   ========================================================= */
+function viewMarkdown(){
+  return `
+  <div class="tool-wrap">
+    <div class="tool-panel">
+      <div class="tool-head">
+        <h2>Markdown 预览</h2>
+        <p>左边写，右边实时渲染。适合写公众号草稿、README 和需求文档。</p>
+      </div>
+      <div class="field-2" style="gap:14px">
+        <div>
+          <div class="field-label"><span>Markdown</span><span class="field-hint" id="mdCount">0 字符</span></div>
+          <textarea class="ta" id="mdIn" spellcheck="false" placeholder="# 标题&#10;&#10;- 列表项&#10;- **加粗**"></textarea>
+        </div>
+        <div>
+          <div class="field-label"><span>预览</span></div>
+          <div id="mdOut" style="min-height:190px;padding:14px;border:1.5px solid var(--line-2);border-radius:12px;background:#fff;overflow:auto;max-height:520px"></div>
+        </div>
+      </div>
+      <div class="row-actions">
+        <button class="chip" id="btnMdSample">填示例</button>
+        <button class="chip" id="btnMdCopy">复制 HTML</button>
+      </div>
+      <div class="hint">渲染前会过滤脚本与事件属性，避免把危险 HTML 插进页面。</div>
+    </div>
+  </div>`;
+}
+
+function initMarkdown(){
+  const clean = html => html
+    .replace(/<script[\s\S]*?<\/script>/gi, '')
+    .replace(/<style[\s\S]*?<\/style>/gi, '')
+    .replace(/\son\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '')
+    .replace(/javascript:/gi, '');
+
+  const run = () => {
+    const src = $id('mdIn').value;
+    $id('mdCount').textContent = src.length + ' 字符';
+    $id('mdOut').innerHTML = clean(marked.parse(src || ''));
+    $id('mdOut').querySelectorAll('a').forEach(a => { a.target = '_blank'; a.rel = 'noopener'; });
+  };
+
+  $id('mdIn').addEventListener('input', run);
+  $id('btnMdSample').addEventListener('click', () => {
+    $id('mdIn').value = '# 装修报价单核对要点\n\n## 必查三项\n\n1. **漏项**：防水高度、成品保护\n2. **重复计价**：辅料是否已含在铺贴单价\n3. **单价异常**：同一工艺不同报价\n\n> 签约前逐条核对项目特征描述。\n\n`水电阻燃管 2.5 平方`';
+    run();
+  });
+  $id('btnMdCopy').addEventListener('click', () => copyText($id('mdOut').innerHTML));
+}
+
+/* =========================================================
+   路由
+   ========================================================= */
+const VIEWS = {
+  'renovation': {
+    title:'装修报价试算器',
+    sub:'按分项工程拆解，输出明细与总价区间',
+    html(){ return document.getElementById('tpl-renovation').innerHTML; },
+    init: bindTool
+  },
+  'img-compress': {
+    title:'图片压缩 / 格式转换',
+    sub:'批量压缩、转格式、限制最大边长，图片不上传',
+    html: viewImgCompress, init: initImgCompress
+  },
+  'json': {
+    title:'JSON 格式化 / 校验',
+    sub:'格式化、压缩、定位错误位置',
+    html: viewJson, init: initJson
+  },
+  'text-stats': {
+    title:'字数 / 文本统计',
+    sub:'字数、字符、行数、阅读时长与中英文占比',
+    html: viewTextStats, init: initTextStats
+  },
+  'loan': {
+    title:'贷款月供试算',
+    sub:'等额本息与等额本金对比，含还款明细',
+    html: viewLoan, init: initLoan
+  },
+  'tax': {
+    title:'个税计算器',
+    sub:'按月度预扣率表估算税后收入',
+    html: viewTax, init: initTax
+  },
+  'unit': {
+    title:'单位换算',
+    sub:'长度、面积、重量、体积、温度、数据量',
+    html: viewUnit, init: initUnit
+  },
+  'ai-summary': {
+    title:'AI 文本摘要',
+    sub:'本地抽取式摘要，不联网、不上传',
+    html: viewAiSummary, init: initAiSummary
+  },
+  'qrcode': {
+    title:'二维码生成器',
+    sub:'本地生成，可调容错、尺寸与颜色',
+    html: viewQr, init: initQr, lib: 'qr'
+  },
+  'yaml': {
+    title:'JSON ↔ YAML 转换',
+    sub:'配置文件互转，保留缩进与类型',
+    html: viewYaml, init: initYaml, lib: 'yaml'
+  },
+  'csv': {
+    title:'CSV 转 JSON',
+    sub:'自动识别分隔符，表格预览与 JSON 输出',
+    html: viewCsv, init: initCsv, lib: 'csv'
+  },
+  'pdf-merge': {
+    title:'PDF 合并',
+    sub:'多个 PDF 按顺序合成一个，文件不上传',
+    html: viewPdfMerge, init: initPdfMerge, lib: 'pdf'
+  },
+  'markdown': {
+    title:'Markdown 预览',
+    sub:'实时渲染，过滤脚本与事件属性',
+    html: viewMarkdown, init: initMarkdown, lib: 'md'
+  }
+};
+
+function route(){
+  const hash = location.hash.replace(/^#\/?/, '').split('?')[0];
+  const home = $id('page-home');
+  const tool = $id('page-tool');
+  const view = VIEWS[hash];
+
+  if (!view){
+    home.hidden = false;
+    tool.hidden = true;
+    document.title = '工具矩阵 · 打开就能用的在线小工具';
+    window.scrollTo({ top:0, behavior:'instant' });
+    return;
+  }
+
+  home.hidden = true;
+  tool.hidden = false;
+  $id('tool-title').textContent = view.title;
+  $id('tool-sub').textContent = view.sub;
+  document.title = view.title + ' · 工具矩阵';
+  $id('tool-root').innerHTML = view.html();
+  window.scrollTo({ top:0, behavior:'instant' });
+
+  if (view.lib){
+    const root = $id('tool-root');
+    root.insertAdjacentHTML('afterbegin', '<div class="hint" id="libLoading">正在加载组件…</div>');
+    ensureLib(view.lib)
+      .then(() => { const t = $id('libLoading'); if (t) t.remove(); view.init(); })
+      .catch(err => {
+        const t = $id('libLoading');
+        if (t){ t.innerHTML = '<b style="color:#b42318">组件加载失败：</b>' + esc(err.message); }
+      });
+  } else {
+    view.init();
+  }
+}
+
+/* ---------- 导航代理 ---------- */
+document.addEventListener('click', e => {
+  const nav = e.target.closest('[data-nav]');
+  if (nav){
+    e.preventDefault();
+    location.hash = nav.getAttribute('href');
+    return;
+  }
+  const sc = e.target.closest('[data-scroll]');
+  if (sc){
+    e.preventDefault();
+    const target = document.querySelector(sc.getAttribute('href'));
+    if (target) target.scrollIntoView({ behavior:'smooth' });
+  }
+});
+
+/* ---------- 启动 ---------- */
+window.addEventListener('hashchange', route);
+renderTools();
+route();
+</script>
+</body>
+</html>
