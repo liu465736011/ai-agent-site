@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>工具矩阵 · 打开就能用的在线小工具</title>
-<meta name="description" content="装修报价试算器、材料用量计算等实用在线工具，不用注册、不用下载，打开就能算。">
+<title>工具矩阵 · 13 个免费无广告的在线小工具</title>
+<meta name="description" content="13 个打开就能用的在线小工具：装修报价、贷款个税、图片压缩、PDF 合并、二维码、JSON/YAML/CSV 处理。纯免费、无广告、不上传数据。">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%232563eb'/%3E%3Cpath d='M9 21V11h4l3 5 3-5h4v10h-3v-5l-2 3.5h-2L14 16v5z' fill='white'/%3E%3C/svg%3E">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -164,13 +164,6 @@ button{font-family:inherit}
 }
 .tool-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg);border-color:#cadcf8}
 .tool-card:hover::after{opacity:1}
-.tool-card[data-status="soon"]{
-  background:#fafbfe;border-style:dashed;border-color:#e2e8f2;
-  cursor:default;pointer-events:none;
-}
-.tool-card[data-status="soon"] .tool-ico{
-  background:#f1f4f9;color:#a3aec2;box-shadow:none;
-}
 .tool-ico{
   width:42px;height:42px;border-radius:12px;flex:0 0 auto;
   display:grid;place-items:center;
@@ -185,7 +178,6 @@ button{font-family:inherit}
   padding:2.5px 7px;border-radius:5px;text-transform:uppercase;
 }
 .tool-tag.live{background:#e7f8f3;color:#0a7a6b}
-.tool-tag.soon{background:#eef1f6;color:#93a0b4}
 .tool-foot{
   display:flex;align-items:center;justify-content:space-between;
   padding-top:12px;border-top:1px solid #f0f3f8;margin-top:3px;
@@ -193,7 +185,6 @@ button{font-family:inherit}
 }
 .tool-foot span.arrow{transition:transform .2s}
 .tool-card:hover .tool-foot span.arrow{transform:translateX(3px)}
-.tool-card[data-status="soon"] .tool-foot{color:var(--ink-3);font-weight:600}
 
 /* ---------- 工具页外壳 ---------- */
 .toolbar{
@@ -570,21 +561,21 @@ select.ipt{cursor:pointer;padding-right:6px}
 
   <section class="hero">
     <div class="wrap">
-      <span class="hero-badge"><span class="pulse"></span> 持续更新中 · 每个工具都免费可用</span>
-      <h1>一堆<span class="grad">能干活的小工具</span><br>打开就能用，不用注册</h1>
-      <p class="lede">把日常反复算、反复查、反复处理的活儿做成在线工具。文件、图片、计算、文本，优先做好一个核心功能，打开就能用。</p>
+      <span class="hero-badge"><span class="pulse"></span> 纯免费 · 无广告 · 不上传数据</span>
+      <h1><span class="grad">13 个能干活的小工具</span><br>打开就能用，不用注册</h1>
+      <p class="lede">把日常反复算、反复查、反复处理的活儿做成在线工具。只保留真正可用、条款允许的功能：文件与图片在浏览器本地处理，计算与文本不联网，没有广告、没有付费墙。</p>
       <div class="hero-cta">
         <a class="btn btn-primary" href="#/renovation" data-nav>
           试试装修报价试算器
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </a>
-        <a class="btn btn-ghost" href="#tools" data-scroll>看看还有什么</a>
+        <a class="btn btn-ghost" href="#tools" data-scroll>看看全部工具</a>
       </div>
       <div class="hero-meta">
-        <div><b id="stat-tools">1</b>已上线工具</div>
-        <div><b id="stat-soon">5</b>规划中</div>
-        <div><b>0<i>元</i></b>全部免费</div>
-        <div><b>0<i>次</i></b>需注册</div>
+        <div><b id="stat-tools">13</b>可用工具</div>
+        <div><b id="stat-cat">5</b>工具分类</div>
+        <div><b>0<i>个</i></b>广告位</div>
+        <div><b>0<i>次</i></b>数据上传</div>
       </div>
     </div>
   </section>
@@ -595,9 +586,9 @@ select.ipt{cursor:pointer;padding-right:6px}
         <div>
           <div class="sec-tag">TOOLKIT</div>
           <h2>把复杂的事，变成一个按钮</h2>
-          <p>先做真正能用的核心功能；文件和图片优先本地处理，不上传原始内容</p>
+          <p>只收录真正可用的核心功能；本地处理、不上传原始内容，无广告无付费墙</p>
         </div>
-        <div class="sec-note">共 <b id="tool-count">6</b> 个工具 · 1 个可用</div>
+        <div class="sec-note">共 <b id="tool-count">13</b> 个可用工具</div>
       </div>
       <div class="tool-groups" id="tools-grid"><!-- JS 渲染 --></div>
     </div>
@@ -629,7 +620,7 @@ select.ipt{cursor:pointer;padding-right:6px}
 <!-- ================= 页脚 ================= -->
 <footer>
   <div class="foot">
-    <div>工具矩阵 · 所有计算在本地完成，不留存任何输入数据</div>
+    <div>工具矩阵 · 非商业用途 · 无广告、无追踪、无付费墙 · 所有处理在浏览器本地完成，不留存任何输入数据</div>
     <div class="foot-links">
       <a href="#/" data-nav>全部工具</a>
       <a href="#/renovation" data-nav>装修报价试算</a>
@@ -765,34 +756,19 @@ select.ipt{cursor:pointer;padding-right:6px}
    ========================================================= */
 const TOOLS = [
   /* ---------- AI 工具 ---------- */
-  { id:'ai-summary', category:'ai', name:'AI 文本摘要', desc:'长文、会议记录、报告粘进来，自动抽取关键句，输出可读摘要。纯本地算法，不联网、不上传。', status:'live', icon:'<path d="M4 6h16M4 12h9M4 18h13"/><path d="M17 15l2 2 3-4"/>', meta:'本地运算 · 免费' },
-  { id:'remove-bg', category:'ai', name:'AI 图片去背景', desc:'商品图、头像一键抠图，导出透明 PNG。模型在浏览器里跑，图片不出本机。', status:'soon', icon:'<path d="M4 4h7M4 4v7M20 20h-7M20 20v-7"/><path d="M9 15l2 2 4-5 3 3"/>', meta:'U²-Netp · Apache-2.0' },
-  { id:'ai-erase', category:'ai', name:'AI 消除笔', desc:'圈掉画面里的路人、电线、水印框，模型自动补全背景。不处理他人版权水印。', status:'soon', icon:'<path d="M4 20h16M7 16l9-9 3 3-9 9z"/><path d="M14 6l3-3 3 3-3 3"/>', meta:'MI-GAN · MIT' },
-  { id:'ai-idphoto', category:'ai', name:'证件照换底色', desc:'一寸二寸自动裁切，红蓝白底一键替换，导出可打印尺寸。', status:'soon', icon:'<rect x="4" y="3" width="16" height="18" rx="2"/><circle cx="12" cy="10" r="2.5"/><path d="M8 18c1.2-2.4 6.8-2.4 8 0"/>', meta:'抠图 + 换底 · 规划中' },
-  { id:'ai-upscale', category:'ai', name:'AI 图片放大', desc:'低清图放大 2-4 倍并补细节，适合老照片和截图。', status:'soon', icon:'<path d="M4 14v6h6M20 10V4h-6"/><path d="M14 10l6-6M10 14l-6 6"/>', meta:'超分 · 规划中' },
-  { id:'ai-ocr', category:'ai', name:'图片文字识别', desc:'截图、扫描件直接提取文字，支持中英文混排，可复制可导出。', status:'soon', icon:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 10h4M7 14h10M15 10h2"/>', meta:'tesseract.js · Apache-2.0' },
-  { id:'ai-polish', category:'ai', name:'AI 文案改写', desc:'同一段话换三种语气：正式、口语、营销。适合写商品描述和回复客户。', status:'soon', icon:'<path d="M12 3l2.2 4.6 5 .7-3.6 3.5.9 5-4.5-2.4-4.5 2.4.9-5L4.8 8.3l5-.7z"/>', meta:'需接模型 · 规划中' },
+  { id:'ai-summary', category:'ai', name:'文本摘要', desc:'长文、会议记录、报告粘进来，自动抽取关键句，输出可读摘要。纯本地算法，不联网、不上传。', status:'live', icon:'<path d="M4 6h16M4 12h9M4 18h13"/><path d="M17 15l2 2 3-4"/>', meta:'本地抽取 · 非生成式' },
 
   /* ---------- 图片工具 ---------- */
   { id:'img-compress', category:'image', name:'图片压缩 / 格式转换', desc:'批量压缩 JPG、PNG、WebP，可限制最大边长并转格式，直接看压缩前后大小。', status:'live', icon:'<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9" r="1.5"/><path d="M21 15l-5-5L5 20"/>', meta:'本地处理 · 批量' },
-  { id:'img-convert', category:'image', name:'图片尺寸调整', desc:'按固定宽高或百分比缩放，批量导出，保持比例不变形。', status:'soon', icon:'<path d="M12 3v12M8 11l4 4 4-4M5 20h14"/>', meta:'缩放 · 规划中' },
-  { id:'img-watermark', category:'image', name:'图片加水印', desc:'批量加文字或图片水印，位置、透明度、角度可调。', status:'soon', icon:'<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 15l4-4 3 3"/>', meta:'水印 · 规划中' },
 
   /* ---------- 文件工具 ---------- */
-  { id:'pdf-merge', category:'file', name:'PDF 合并 / 拆分', desc:'多个 PDF 拖进来按顺序合成一个，自动显示每个文件页数，文件不上传。', status:'live', icon:'<path d="M6 2h9l3 3v17H6z"/><path d="M9 13h6M9 17h5"/>', meta:'pdf-lib · MIT' },
-  { id:'pdf-convert', category:'file', name:'PDF 与图片互转', desc:'PDF 每页导出成图片，或把多张图片合成一个 PDF。', status:'soon', icon:'<path d="M4 7h11M11 3l4 4-4 4M20 17H9M13 13l-4 4 4 4"/>', meta:'多格式 · 规划中' },
-  { id:'pdf-compress', category:'file', name:'PDF 压缩', desc:'扫描件、图纸体积太大，压到可发邮件的尺寸。', status:'soon', icon:'<path d="M6 2h9l3 3v17H6z"/><path d="M9 12h6M9 16h4"/>', meta:'规划中' },
+  { id:'pdf-merge', category:'file', name:'PDF 合并', desc:'多个 PDF 拖进来按顺序合成一个，自动显示每个文件页数，文件不上传。', status:'live', icon:'<path d="M6 2h9l3 3v17H6z"/><path d="M9 13h6M9 17h5"/>', meta:'pdf-lib · MIT' },
 
   /* ---------- 计算器 ---------- */
   { id:'renovation', category:'calc', name:'装修报价试算器', desc:'输入面积、户型、档次，自动拆出十二项工程明细与总价区间，含主材可选。', status:'live', icon:'<path d="M3 21h18M6 21V8l6-4 6 4v13M10 21v-6h4v6"/>', meta:'12 项分项 · 4 档标准' },
   { id:'loan', category:'calc', name:'贷款月供试算', desc:'等额本息与等额本金对比，看月供、总利息和还款明细。', status:'live', icon:'<path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>', meta:'两种还款方式' },
   { id:'tax', category:'calc', name:'个税计算器', desc:'按月度预扣率表算工资个税，输入社保与专项附加扣除，直接看税后到手。', status:'live', icon:'<path d="M4 20h16M7 20V8M12 20V4M17 20v-7"/>', meta:'2026 预扣率表' },
   { id:'unit', category:'calc', name:'单位换算', desc:'长度、面积、重量、体积、温度、数据量互转，装修和日常都用得上。', status:'live', icon:'<path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/>', meta:'6 类单位' },
-  { id:'material', category:'calc', name:'材料用量计算器', desc:'瓷砖片数、乳胶漆升数、腻子粉袋数，按实际铺贴面积算，避免多买浪费。', status:'soon', icon:'<path d="M4 7h16M4 12h16M4 17h10"/>', meta:'规划中' },
-  { id:'tile', category:'calc', name:'瓷砖铺贴排版', desc:'按房间尺寸与砖规格，算整砖数、裁切损耗率与最优起铺点。', status:'soon', icon:'<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 3v18"/>', meta:'规划中' },
-  { id:'heat', category:'calc', name:'热量 / BMI 计算器', desc:'每日热量、基础代谢、BMI 与目标体重，适合健康管理。', status:'soon', icon:'<path d="M12 3a4 4 0 0 0-4 4c0 2 1 3 1 4a4 4 0 1 0 6 0c0-1 1-2 1-4a4 4 0 0 0-4-4z"/><path d="M12 14v5"/>', meta:'BMI · TDEE · 规划中' },
-  { id:'engineering', category:'calc', name:'工程测算工具箱', desc:'混凝土、钢筋、砌体、墙地面、油漆等常用工程量快速计算。', status:'soon', icon:'<path d="M4 20h16M6 17l3-8 3 5 3-10 3 13"/>', meta:'工程量 · 规划中' },
-  { id:'quote-check', category:'calc', name:'报价单核对助手', desc:'粘贴装修公司报价，自动查漏项、查重复计价、查单价异常。', status:'soon', icon:'<path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>', meta:'规划中' },
 
   /* ---------- 文本工具 ---------- */
   { id:'json', category:'text', name:'JSON 格式化', desc:'格式化、压缩、校验 JSON，出错时标出具体位置，数据只在本地处理。', status:'live', icon:'<path d="M8 3H6a2 2 0 0 0-2 2v3a2 2 0 0 1-2 2 2 2 0 0 1 2 2v3a2 2 0 0 0 2 2h2M16 3h2a2 2 0 0 1 2 2v3a2 2 0 0 0 2 2 2 2 0 0 0-2 2v3a2 2 0 0 1-2 2h-2"/>', meta:'格式化 · 校验' },
@@ -800,13 +776,12 @@ const TOOLS = [
   { id:'qrcode', category:'text', name:'二维码生成器', desc:'网址、文本生成二维码，可选容错级别、尺寸和颜色，下载高清 PNG。', status:'live', icon:'<path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h2v2h-2zM18 18h2v2h-2z"/>', meta:'qrcode-generator · MIT' },
   { id:'yaml', category:'text', name:'JSON ↔ YAML 转换', desc:'配置文件互转，保留缩进与类型，解析失败会指出具体行。', status:'live', icon:'<path d="M8 3H6a2 2 0 0 0-2 2v3a2 2 0 0 1-2 2 2 2 0 0 1 2 2v3a2 2 0 0 0 2 2h2M16 3h2a2 2 0 0 1 2 2v3a2 2 0 0 0 2 2 2 2 0 0 0-2 2v3a2 2 0 0 1-2 2h-2"/>', meta:'js-yaml · MIT' },
   { id:'csv', category:'text', name:'CSV 转 JSON', desc:'表格粘进来直接看结构，自动识别分隔符，一键转 JSON 或预览前 20 行。', status:'live', icon:'<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 4v16"/>', meta:'PapaParse · MIT' },
-  { id:'markdown', category:'text', name:'Markdown 预览', desc:'左边写右边看，渲染前过滤脚本与事件属性，适合写文档草稿。', status:'live', icon:'<path d="M3 6h18v12H3z"/><path d="M7 15V9l2.5 3L12 9v6M15 9v6M15 15l2-2"/>', meta:'marked · MIT' },
-  { id:'resume', category:'text', name:'简历生成器', desc:'填写经历和技能，生成结构清晰的中文简历，可打印或保存 PDF。', status:'soon', icon:'<path d="M6 3h12v18H6zM9 7h6M9 11h6M9 15h4"/>', meta:'简历 · 规划中' }
+  { id:'markdown', category:'text', name:'Markdown 预览', desc:'左边写右边看，渲染前过滤脚本与事件属性，适合写文档草稿。', status:'live', icon:'<path d="M3 6h18v12H3z"/><path d="M7 15V9l2.5 3L12 9v6M15 9v6M15 15l2-2"/>', meta:'marked · MIT' }
 ];
 
 /* ---------- 渲染工具卡片 ---------- */
 const CATEGORY_META = {
-  ai: { label:'AI 工具', note:'本地推理优先，不上传你的内容', color:'#7c3aed' },
+  ai: { label:'文本智能', note:'本地算法，不调用生成模型', color:'#7c3aed' },
   image: { label:'图片工具', note:'压缩、缩放与格式处理', color:'#0d9488' },
   file: { label:'文件工具', note:'PDF 与文档处理', color:'#2563eb' },
   calc: { label:'计算器', note:'工程、生活与财务测算', color:'#e2610c' },
@@ -820,33 +795,27 @@ function renderTools(){
     const list = TOOLS.filter(t => t.category === key);
     return `<section class="tool-group" style="--group-color:${meta.color}">
       <h3>${meta.label}<span>${meta.note}</span></h3>
-      <div class="tool-group-grid">${list.map(t => {
-        const live = t.status === 'live';
-        return `
-        <a class="tool-card" data-status="${t.status}" href="#/${t.id}" ${live ? 'data-nav' : ''}>
-          <span class="tool-ico" style="${live ? '' : 'background:#f1f4f9;color:#a3aec2;box-shadow:none'}">
+      <div class="tool-group-grid">${list.map(t => `
+        <a class="tool-card" href="#/${t.id}" data-nav>
+          <span class="tool-ico">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${t.icon}</svg>
           </span>
-          <h3>${t.name}${live
-            ? '<span class="tool-tag live">可用</span>'
-            : '<span class="tool-tag soon">即将上线</span>'}</h3>
+          <h3>${t.name}<span class="tool-tag live">可用</span></h3>
           <p>${t.desc}</p>
           <div class="tool-foot">
             <span>${t.meta}</span>
-            ${live ? '<span class="arrow">打开 →</span>' : '<span>敬请期待</span>'}
+            <span class="arrow">打开 →</span>
           </div>
-        </a>`;
-      }).join('')}</div>
-      ${key === 'ai' ? '<div class="hint" style="margin-top:12px">合规说明：AI 生成类功能上线时会在结果中加显式标识（依据《人工智能生成合成内容标识办法》）；当前已上线的摘要为抽取式算法，不调用生成模型，不含合成内容。</div>' : ''}
+        </a>`).join('')}</div>
+      ${key === 'ai' ? '<div class="hint" style="margin-top:12px">说明：本工具是本地抽取式摘要，不调用生成模型，不产生 AI 合成内容；你的文本不会离开浏览器。</div>' : ''}
     </section>`;
   }).join('');
   grid.innerHTML = groups;
 
-  const liveN = TOOLS.filter(t => t.status === 'live').length;
-  document.getElementById('stat-tools').textContent = liveN;
-  document.getElementById('stat-soon').textContent = TOOLS.length - liveN;
+  document.getElementById('stat-tools').textContent = TOOLS.length;
+  document.getElementById('stat-cat').textContent = Object.keys(CATEGORY_META).length;
   document.getElementById('tool-count').textContent = TOOLS.length;
-  document.querySelector('.sec-note').innerHTML = `共 <b>${TOOLS.length}</b> 个工具 · ${liveN} 个可用`;
+  document.querySelector('.sec-note').innerHTML = `共 <b>${TOOLS.length}</b> 个可用工具 · 全部本地处理`;
 }
 
 /* =========================================================
@@ -2459,8 +2428,8 @@ const VIEWS = {
     html: viewUnit, init: initUnit
   },
   'ai-summary': {
-    title:'AI 文本摘要',
-    sub:'本地抽取式摘要，不联网、不上传',
+    title:'文本摘要',
+    sub:'本地抽取式摘要，不联网、不调用生成模型',
     html: viewAiSummary, init: initAiSummary
   },
   'qrcode': {
