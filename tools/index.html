@@ -228,7 +228,15 @@
 { id:'engineering', category:'calc', name:'工程测算工具箱', desc:'混凝土配合比、钢筋理论重量、砌体用砖量三类常用工程量快速测算。', status:'live', icon:'<path d="M4 20h16M6 17l3-8 3 5 3-10 3 13"/>', meta:'混凝土 · 钢筋 · 砌体' },
 { id:'quote-check', category:'calc', name:'报价单核对助手', desc:'粘贴报价明细，自动查重复项、漏项与单价异常，输出可复制的核对报告。', status:'live', icon:'<path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>', meta:'查重 · 查漏 · 单价异常' },
 { id:'img-resize', category:'image', name:'图片尺寸调整', desc:'按指定宽高或百分比批量缩放图片，可保持比例，导出 JPG / PNG / WebP。', status:'live', icon:'<path d="M12 3v12M8 11l4 4 4-4M5 20h14"/>', meta:'批量缩放 · 保持比例' },
-{ id:'pdf-img', category:'file', name:'图片转 PDF / PDF 拆分', desc:'多张图片按顺序合成一个 PDF，或把一个 PDF 按页码范围拆成新文件，本地处理。', status:'live', icon:'<path d="M6 2h9l3 3v17H6z"/><path d="M9 12h6M9 16h4"/>', meta:'pdf-lib · MIT' }
+{ id:'pdf-img', category:'file', name:'图片转 PDF / PDF 拆分', desc:'多张图片按顺序合成一个 PDF，或把一个 PDF 按页码范围拆成新文件，本地处理。', status:'live', icon:'<path d="M6 2h9l3 3v17H6z"/><path d="M9 12h6M9 16h4"/>', meta:'pdf-lib · MIT' },
+{ id:'base64', category:'text', name:'Base64 编解码', desc:'文本与 Base64 双向转换，UTF-8 安全，中文不乱码，全程本地。', status:'live', icon:'<path d="M4 7h10M9 4v6M6 14l-2 6M10 14l-2 6M14 11l4 4 4-4M18 15v5"/>', meta:'UTF-8 · 本地' },
+{ id:'url', category:'text', name:'URL / HTML 编码', desc:'URL 编码、URL 解码、HTML 实体编解码，处理链接与参数时不踩坑。', status:'live', icon:'<path d="M10 13a5 5 0 0 0 7.07 0l2-2a5 5 0 0 0-7.07-7.07M14 11a5 5 0 0 0-7.07 0l-2 2A5 5 0 0 0 12 20.07"/>', meta:'4 种模式 · 本地' },
+{ id:'uuid', category:'text', name:'UUID 生成器', desc:'批量生成 UUID v4，可一次 100 个并整体复制，本地生成。', status:'live', icon:'<rect x="3" y="8" width="18" height="8" rx="4"/><path d="M8 12h.01M12 12h.01M16 12h.01"/>', meta:'v4 · crypto' },
+{ id:'hash', category:'text', name:'哈希计算', desc:'SHA-1 / SHA-256 / SHA-512 三档一次算完，做文件指纹与口令校验。', status:'live', icon:'<path d="M12 3v18M5 8l7-5 7 5M5 16l7 5 7-5"/>', meta:'crypto.subtle' },
+{ id:'regex', category:'text', name:'正则测试器', desc:'实时高亮所有匹配并展开捕获组，调 /g /i /m /s 即时生效。', status:'live', icon:'<path d="M4 7h10M9 4v6M6 14l-2 6M10 14l-2 6M16 10h4M18 10v6"/>', meta:'匹配 · 分组' },
+{ id:'color', category:'image', name:'颜色转换 / 对比度', desc:'HEX、RGB、HSL 三格式互转，并给出与黑白文字的 WCAG 对比度。', status:'live', icon:'<circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18 4.5 4.5 0 0 1 0-9h4.5"/>', meta:'HEX/RGB/HSL' },
+{ id:'timestamp', category:'calc', name:'时间戳转换', desc:'Unix 秒 / 毫秒与本地日期双向转换，附相对时间与星期，含实时时钟。', status:'live', icon:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>', meta:'双向 · 本地' },
+{ id:'diff', category:'text', name:'文本差异对比', desc:'两段文本逐行对比，标出新增与删除，写方案核对改动很方便。', status:'live', icon:'<path d="M7 4v16M17 4v16M4 8h-2M4 16h-2M22 8h-2M22 16h-2M11 9h2M11 15h2"/>', meta:'逐行 LCS' }
 ];
 const CATEGORY_META = {
 ai: { label:'文本智能', note:'本地算法，不调用生成模型', color:'#7c3aed' },
@@ -2120,6 +2128,348 @@ render();
 });
 render();
 }
+function viewBase64(){
+return `
+<div class="tool-wrap"><div class="tool-panel">
+<div class="tool-head"><h2>Base64 编解码</h2><p>UTF-8 安全，中文不乱码。选定方向后输入会实时转换，全程在本地完成。</p></div>
+<div class="chip-row" id="b64Dir">
+<button class="chip" data-mode="enc" style="background:#eff5ff;color:#2563eb;border-color:#c9dbf8">文本 → Base64</button>
+<button class="chip" data-mode="dec">Base64 → 文本</button>
+</div>
+<div class="field" style="margin-top:14px"><div class="field-label"><span>输入</span></div>
+<textarea class="ta" id="b64In" rows="5" placeholder="要编码的文本，或要解码的 Base64 字符串"></textarea></div>
+<div class="field" style="margin-top:12px"><div class="field-label"><span>结果</span></div>
+<textarea class="ta" id="b64Out" rows="5" readonly placeholder="（实时生成）"></textarea></div>
+<div class="hint" id="b64Note" style="margin-top:10px"></div>
+<div class="row-actions"><button class="chip" id="b64Copy">复制结果</button></div>
+</div></div>`;
+}
+function initBase64(){
+let dir='enc';
+const run=()=>{
+const s=$id('b64In').value, out=$id('b64Out'), note=$id('b64Note');
+try{
+if(dir==='enc'){ out.value = btoa(unescape(encodeURIComponent(s))); note.textContent=''; }
+else { out.value = decodeURIComponent(escape(atob(s.trim()))); note.textContent=''; }
+}catch(e){ out.value=''; note.innerHTML='<b style="color:#b42318">解码失败：</b>不是有效的 Base64 字符串。'; }
+};
+$id('b64In').addEventListener('input', run);
+$id('b64Dir').addEventListener('click', e => {
+const b=e.target.closest('[data-mode]'); if(!b) return;
+dir=b.dataset.mode;
+$id('b64Dir').querySelectorAll('.chip').forEach(c=>{c.style.background='';c.style.color='';c.style.borderColor='';});
+b.style.background='#eff5ff'; b.style.color='#2563eb'; b.style.borderColor='#c9dbf8'; run();
+});
+$id('b64Copy').addEventListener('click', ()=>copyText($id('b64Out').value));
+run();
+}
+function viewUrl(){
+return `
+<div class="tool-wrap"><div class="tool-panel">
+<div class="tool-head"><h2>URL / HTML 编码</h2><p>URL 编码、URL 解码、HTML 实体编解码，处理链接参数与富文本时不踩坑。</p></div>
+<div class="chip-row" id="urlMode" style="flex-wrap:wrap">
+<button class="chip" data-mode="enc" style="background:#eff5ff;color:#2563eb;border-color:#c9dbf8">URL 编码</button>
+<button class="chip" data-mode="dec">URL 解码</button>
+<button class="chip" data-mode="henc">HTML 实体编码</button>
+<button class="chip" data-mode="hdec">HTML 实体解码</button>
+</div>
+<div class="field" style="margin-top:14px"><div class="field-label"><span>输入</span></div>
+<textarea class="ta" id="urlIn" rows="4" placeholder="要编码或解码的文本"></textarea></div>
+<div class="field" style="margin-top:12px"><div class="field-label"><span>结果</span></div>
+<textarea class="ta" id="urlOut" rows="4" readonly placeholder="（实时生成）"></textarea></div>
+<div class="hint" id="urlNote" style="margin-top:10px"></div>
+<div class="row-actions"><button class="chip" id="urlCopy">复制结果</button></div>
+</div></div>`;
+}
+function initUrl(){
+let mode='enc';
+const map={
+enc: s=>encodeURIComponent(s),
+dec: s=>{ try{return decodeURIComponent(s);}catch(e){throw new Error('不是有效的 URL 编码');} },
+henc: s=>s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),
+hdec: s=>s.replace(/&(#\d+|#x[0-9a-f]+|[a-z]+);/gi,m=>{
+const k=m.slice(1,-1);
+if(k[0]==='#') return String.fromCharCode(k[1]==='x'?parseInt(k.slice(1),16):parseInt(k,10));
+return ({amp:'&',lt:'<',gt:'>',quot:'"',apos:'"',nbsp:' '})[k.toLowerCase()] ?? m;
+})
+};
+const run=()=>{
+const s=$id('urlIn').value, out=$id('urlOut'), note=$id('urlNote');
+try{ out.value=map[mode](s); note.textContent=''; }catch(e){ out.value=''; note.innerHTML='<b style="color:#b42318">'+esc(e.message)+'。</b>'; }
+};
+$id('urlIn').addEventListener('input', run);
+$id('urlMode').addEventListener('click', e=>{
+const b=e.target.closest('[data-mode]'); if(!b) return; mode=b.dataset.mode;
+$id('urlMode').querySelectorAll('.chip').forEach(c=>{c.style.background='';c.style.color='';c.style.borderColor='';});
+b.style.background='#eff5ff'; b.style.color='#2563eb'; b.style.borderColor='#c9dbf8'; run();
+});
+$id('urlCopy').addEventListener('click', ()=>copyText($id('urlOut').value));
+run();
+}
+function uuidv4(){
+if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+const b = (window.crypto?crypto.getRandomValues(new Uint8Array(16)):Array.from({length:16},()=>Math.floor(Math.random()*256)));
+b[6]=(b[6]&0x0f)|0x40; b[8]=(b[8]&0x3f)|0x80;
+const h=[]; for(let i=0;i<16;i++) h.push((b[i]+0x100).toString(16).slice(1));
+const s=h.join('');
+return s.slice(0,8)+'-'+s.slice(8,12)+'-'+s.slice(12,16)+'-'+s.slice(16,20)+'-'+s.slice(20);
+}
+function viewUuid(){
+return `
+<div class="tool-wrap"><div class="tool-panel">
+<div class="tool-head"><h2>UUID 生成器</h2><p>生成 RFC 4122 的 UUID v4，可一次 100 个并整体复制，本地生成。</p></div>
+<div class="field"><div class="field-label"><span>数量（1–100）</span></div>
+<input class="ipt" id="uuidN" type="number" min="1" max="100" value="5" style="max-width:140px"></div>
+<div class="row-actions" style="margin-top:14px">
+<button class="btn btn-primary" id="uuidGen">生成</button>
+<button class="chip" id="uuidCopy">复制全部</button>
+</div>
+<textarea class="ta" id="uuidOut" rows="8" readonly style="margin-top:14px;font-family:ui-monospace,monospace" placeholder="（点“生成”后显示）"></textarea>
+</div></div>`;
+}
+function initUuid(){
+const gen=()=>{
+let n=Math.max(1,Math.min(100,Number($id('uuidN').value)||1));
+$id('uuidOut').value=Array.from({length:n},uuidv4).join('\n');
+toast('已生成 '+n+' 个 UUID');
+};
+$id('uuidGen').addEventListener('click', gen);
+$id('uuidCopy').addEventListener('click', ()=>copyText($id('uuidOut').value));
+gen();
+}
+async function digestBytes(algo, buf){
+const out = await crypto.subtle.digest(algo, buf);
+return [...new Uint8Array(out)].map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+function viewHash(){
+return `
+<div class="tool-wrap"><div class="tool-panel">
+<div class="tool-head"><h2>哈希计算</h2><p>对文本或文件本地计算 SHA-1 / SHA-256 / SHA-512，做文件指纹与内容校验。</p></div>
+<div class="field"><div class="field-label"><span>文本输入</span></div>
+<textarea class="ta" id="hashIn" rows="4" placeholder="要计算哈希的文本"></textarea></div>
+<div class="field" style="margin-top:12px"><div class="field-label"><span>或选择文件</span></div>
+<input type="file" id="hashFile" class="ipt" style="display:block;padding:8px 12px"></div>
+<div class="row-actions" style="margin-top:14px"><button class="btn btn-primary" id="hashRun">计算</button></div>
+<div id="hashOut" style="margin-top:16px"></div>
+<div class="hint" style="margin-top:10px">计算在浏览器本地完成；需通过 https 或 localhost 打开才可用（file:// 双击打开时浏览器会禁用加密 API）。</div>
+</div></div>`;
+}
+function initHash(){
+$id('hashRun').addEventListener('click', async ()=>{
+const box=$id('hashOut');
+const buf = $id('hashFile').files[0] ? await $id('hashFile').files[0].arrayBuffer()
+: new TextEncoder().encode($id('hashIn').value);
+if(!($id('hashFile').files[0]||$id('hashIn').value)){ box.innerHTML='<div class="hint">请先输入文本或选择文件。</div>'; return; }
+if(!window.crypto || !crypto.subtle){ box.innerHTML='<div class="hint"><b style="color:#b42318">当前环境不支持加密 API</b>，请改用 https 地址或 localhost 打开本页面。</div>'; return; }
+box.innerHTML='<div class="hint">计算中…</div>';
+try{
+const name=$id('hashFile').files[0]?$id('hashFile').files[0].name:'';
+const r1=await digestBytes('SHA-1',buf);
+const r2=await digestBytes('SHA-256',buf);
+const r3=await digestBytes('SHA-512',buf);
+box.innerHTML=[['SHA-1',r1],['SHA-256',r2],['SHA-512',r3]].map(([k,v])=>`
+<div style="display:flex;gap:8px;align-items:center;margin-top:10px">
+<span style="width:64px;flex:none;font-weight:700;font-size:12.5px;color:#566">${k}</span>
+<code style="flex:1;font-family:ui-monospace,monospace;font-size:12px;word-break:break-all;background:#f4f6fa;border:1px solid #e2e8f2;border-radius:8px;padding:8px 10px">${v}</code>
+<button class="chip" data-c="${k}" style="flex:none">复制</button>
+</div>`).join('')
++ (name?`<div class="hint" style="margin-top:10px">文件：${esc(name)} · ${fmtBytes(buf.byteLength)}</div>`:'');
+const map={'SHA-1':r1,'SHA-256':r2,'SHA-512':r3};
+box.querySelectorAll('[data-c]').forEach(b=>b.addEventListener('click',()=>copyText(map[b.dataset.c])));
+}catch(e){ box.innerHTML='<div class="hint"><b style="color:#b42318">失败：</b>'+esc(e.message)+'</div>'; }
+});
+}
+function viewRegex(){
+return `
+<div class="tool-wrap"><div class="tool-panel">
+<div class="tool-head"><h2>正则测试器</h2><p>输入正则与测试文本，实时高亮所有匹配并展开捕获组。</p></div>
+<div class="field"><div class="field-label"><span>正则表达式</span></div>
+<input class="ipt" id="rgPattern" placeholder="例如 \\d{1,3}(?:,\\d{3})* 或 \\b\\w+@\\w+\\.\\w+\\b" style="font-family:ui-monospace,monospace"></div>
+<div class="field" style="margin-top:12px"><div class="field-label"><span>标志</span></div>
+<div class="chip-row" id="rgFlags">
+<button class="chip" data-flag="g" style="background:#eff5ff;color:#2563eb;border-color:#c9dbf8">g 全部</button>
+<button class="chip" data-flag="i">i 忽略大小写</button>
+<button class="chip" data-flag="m">m 多行</button>
+<button class="chip" data-flag="s">s 全文匹配</button>
+</div></div>
+<div class="field" style="margin-top:12px"><div class="field-label"><span>测试文本</span></div>
+<textarea class="ta" id="rgTest" rows="5" placeholder="粘贴要匹配的内容"></textarea></div>
+<div id="rgResult" style="margin-top:14px"></div>
+</div></div>`;
+}
+function initRegex(){
+const flags=new Set(['g']);
+const run=()=>{
+const p=$id('rgPattern').value, t=$id('rgTest').value, box=$id('rgResult');
+if(!p){ box.innerHTML='<div class="hint">输入一个正则开始测试。</div>'; return; }
+const f=[...flags].join('');
+let re;
+try{ re=new RegExp(p, f||'g'); }catch(e){ box.innerHTML='<div class="hint"><b style="color:#b42318">正则错误：</b>'+esc(e.message)+'</div>'; return; }
+const reG=new RegExp(p, (f.replace(/g/g,'')||'')+'g');
+let matches=[];
+try{ for(const m of t.matchAll(reG)) matches.push(m); }catch(e){ box.innerHTML='<div class="hint"><b style="color:#b42318">匹配错误：</b>'+esc(e.message)+'</div>'; return; }
+let hi='', last=0;
+for(const m of matches){
+if(m.index>last) hi+=esc(t.slice(last,m.index));
+hi+='<span style="background:#fde9c8;color:#8a3b00;padding:0 2px;border-radius:3px">'+esc(m[0]||'(空)')+'</span>';
+last=m.index+(m[0]?m[0].length:0);
+if(m[0]==='') break;
+}
+hi+=esc(t.slice(last));
+box.innerHTML=`
+<div class="hint" style="margin-bottom:8px"><b>${matches.length}</b> 处匹配</div>
+<div style="border:1px solid #e2e8f2;border-radius:10px;padding:12px;font-family:ui-monospace,monospace;font-size:12.5px;line-height:1.7;white-space:pre-wrap;word-break:break-all;background:#fafbfe">${hi||'<span style="color:#93a0b4">（测试文本为空）</span>'}</div>
+<div class="field-label" style="margin-top:14px"><span>捕获组</span></div>
+${matches.length? matches.map((m,i)=>`<div class="hint" style="margin-top:6px"><b>#${i+1}</b> <i style="color:#566;opacity:.7">[${m.index}]</i> <b>${esc(m[0]||'(空)')}</b>${(m.slice(1).some(x=>x!=null))? '<br>'+m.slice(1).map((x,j)=>`<i style="color:#0a7a6b">组${j+1}=${x==null?'∅':esc(x)}</i>`).join('  '):''}</div>`).join('') : '<div class="hint">无匹配结果。</div>'}`;
+};
+$id('rgPattern').addEventListener('input', run);
+$id('rgTest').addEventListener('input', run);
+$id('rgFlags').addEventListener('click', e=>{
+const b=e.target.closest('[data-flag]'); if(!b) return;
+const f=b.dataset.flag;
+if(flags.has(f)){ flags.delete(f); b.style.background='';b.style.color='';b.style.borderColor=''; }
+else{ flags.add(f); b.style.background='#eff5ff';b.style.color='#2563eb';b.style.borderColor='#c9dbf8'; }
+run();
+});
+run();
+}
+function colorUtil(){
+const hexToRgb=h=>{ h=(h||'').replace('#','').trim(); if(h.length===3)h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2]; const n=parseInt(h,16); return isFinite(n)&&h.length>=3?{r:(n>>16)&255,g:(n>>8)&255,b:n&255}:null; };
+const rgbToHsl=(r,g,b)=>{ r/=255;g/=255;b/=255; const mx=Math.max(r,g,b),mn=Math.min(r,g,b); let h=0,s=0; const l=(mx+mn)/2; if(mx!==mn){ const d=mx-mn; s=l>0.5?d/(2-mx-mn):d/(mx+mn); switch(mx){case r:h=(g-b)/d+(g<b?6:0);break;case g:h=(b-r)/d+2;break;default:h=(r-g)/d+4;} h/=6;} return{h:Math.round(h*360),s:Math.round(s*100),l:Math.round(l*100)}; };
+const lin=c=>{ c/=255; return c<=0.04045?c/12.92:Math.pow((c+0.055)/1.055,2.4); };
+const lum=(r,g,b)=>0.2126*lin(r)+0.7152*lin(g)+0.0722*lin(b);
+const crat=(l1,l2)=>{ const a=Math.max(l1,l2),b=Math.min(l1,l2); return (a+0.05)/(b+0.05); };
+return { hexToRgb, rgbToHsl, lum, crat };
+}
+function viewColor(){
+return `
+<div class="tool-wrap"><div class="tool-panel">
+<div class="tool-head"><h2>颜色转换 / 对比度</h2><p>HEX、RGB、HSL 三格式互转，并给出与白字、黑字的 WCAG 对比度。</p></div>
+<div class="field"><div class="field-label"><span>选择颜色或输入 HEX</span></div>
+<div style="display:flex;gap:10px;align-items:center">
+<input type="color" id="colPick" value="#2563eb" style="width:54px;height:42px;border:none;border-radius:10px;cursor:pointer;background:none">
+<input class="ipt" id="colHex" value="#2563EB" style="max-width:150px;text-transform:uppercase">
+</div></div>
+<div id="colPrev" style="margin-top:16px;height:84px;border-radius:12px;display:flex;align-items:center;justify-content:center;border:1px solid #e2e8f2"></div>
+<div id="colOut" style="margin-top:16px"></div>
+</div></div>`;
+}
+function initColor(){
+const U=colorUtil();
+const run=()=>{
+const rgb=U.hexToRgb($id('colHex').value);
+const prev=$id('colPrev'), out=$id('colOut');
+if(!rgb){ out.innerHTML='<div class="hint"><b style="color:#b42318">无效颜色。</b>请使用 #RRGGBB 格式。</div>'; prev.style.background='#f1f4f9'; prev.innerHTML=''; return; }
+const {r,g,b}=rgb;
+const hsl=U.rgbToHsl(r,g,b);
+const bgLum=U.lum(r,g,b);
+const cw=U.crat(1,bgLum), cb=U.crat(bgLum,0);
+const badge=(v,label)=>`<span style="font-size:11px;font-weight:700;padding:2px 7px;border-radius:20px;margin-left:6px;background:${v>=7?'#e7f8f3':v>=4.5?'#eef5ff':'#fdecec'};color:${v>=7?'#0a7a6b':v>=4.5?'#2563eb':'#b42318'}">${v>=7?'AAA':v>=4.5?'AA':'不达 AA'}</span>`;
+prev.style.background=rgb; prev.innerHTML=`<span style="font-family:ui-monospace,monospace;font-weight:700;color:${cb>cw?'#000':'#fff'}">${$id('colHex').value.toUpperCase()}</span>`;
+out.innerHTML=`
+<div class="metric-grid">
+<div class="metric"><b style="font-family:ui-monospace,monospace">${$id('colHex').value.toUpperCase()}</b><span>HEX</span></div>
+<div class="metric"><b style="font-family:ui-monospace,monospace">rgb(${r} ${g} ${b})</b><span>RGB</span></div>
+<div class="metric"><b style="font-family:ui-monospace,monospace">hsl(${hsl.h} ${hsl.s}% ${hsl.l}%)</b><span>HSL</span></div>
+</div>
+<div class="metric-grid" style="margin-top:12px">
+<div class="metric accent"><b>${cw.toFixed(2)}:1</b><span>白字在此背景上 ${badge(cw)}</span></div>
+<div class="metric accent"><b>${cb.toFixed(2)}:1</b><span>黑字在此背景上 ${badge(cb)}</span></div>
+</div>`;
+};
+$id('colPick').addEventListener('input', e=>{ $id('colHex').value=e.target.value.toUpperCase(); run(); });
+$id('colHex').addEventListener('input', e=>{ const v=e.target.value.trim(); const r=U.hexToRgb(v); if(r){ $id('colPick').value='#'+[r.r,r.g,r.b].map(x=>x.toString(16).padStart(2,'0')).join(''); run(); } });
+run();
+}
+function viewTimestamp(){
+return `
+<div class="tool-wrap"><div class="tool-panel">
+<div class="tool-head"><h2>时间戳转换</h2><p>Unix 秒 / 毫秒与本地日期双向转换，附相对时间与星期。</p></div>
+<div class="field"><div class="field-label"><span>Unix 时间戳（秒或毫秒，自动识别）</span></div>
+<input class="ipt" id="tsNum" type="text" value="${Math.floor(Date.now()/1000)}"></div>
+<div class="field" style="margin-top:12px"><div class="field-label"><span>本地日期时间</span></div>
+<input class="ipt" id="tsLocal" type="datetime-local"></div>
+<div class="row-actions" style="margin-top:14px">
+<button class="btn btn-primary" id="tsSync">从时间戳同步</button>
+<button class="chip" id="tsNow">设为现在</button>
+</div>
+<div id="tsOut" style="margin-top:16px"></div>
+<div class="hint" id="tsLive" style="margin-top:12px"></div>
+</div></div>`;
+}
+function initTimestamp(){
+const WD=['周日','周一','周二','周三','周四','周五','周六'];
+const relTime=d=>{ const s=(Date.now()-d.getTime())/1000; const abs=Math.abs(s); const u=[['年',31536000],['月',2592000],['天',86400],['小时',3600],['分钟',60],['秒',1]]; let str=''; for(const [n,sec] of u){ if(abs>=sec){ const c=Math.floor(abs/sec); str+=c+' '+n; abs-=c*sec; break; } } return s>=0?('约 '+str+'前'):(str?'约 '+str+'后':'刚刚'); };
+const toLocalInput=d=>{ const p=n=>String(n).padStart(2,'0'); return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`; };
+const render=()=>{
+const v=Number($id('tsNum').value)||0;
+if(!v){ $id('tsOut').innerHTML='<div class="hint">输入时间戳。</div>'; return; }
+const secs=v<1e12?v:v/1000;
+const d=new Date(Math.round(secs)*1000);
+$id('tsLocal').value=toLocalInput(d);
+$id('tsOut').innerHTML=`
+<div class="metric-grid">
+<div class="metric accent"><b style="font-size:15px">${d.toLocaleString('zh-CN')}</b><span>本地时间</span></div>
+<div class="metric"><b style="font-size:15px">${d.toUTCString().replace(/GMT\+?\d+ /,'')}</b><span>UTC</span></div>
+<div class="metric"><b>${WD[d.getDay()]}</b><span>星期</span></div>
+<div class="metric"><b style="font-size:14px">${relTime(d)}</b><span>相对现在</span></div>
+</div>`;
+};
+$id('tsNum').addEventListener('input', render);
+$id('tsLocal').addEventListener('input', e=>{
+if(!e.target.value) return;
+const d=new Date(e.target.value); $id('tsNum').value=Math.floor(d.getTime()/1000); render();
+});
+$id('tsNow').addEventListener('click', ()=>{ $id('tsNum').value=Math.floor(Date.now()/1000); render(); });
+$id('tsSync').addEventListener('click', render);
+const live=()=>{ $id('tsLive').textContent='当前时间戳：'+Math.floor(Date.now()/1000)+' 秒 · '+Math.floor(Date.now())+' 毫秒'; };
+live(); setInterval(live,1000);
+render();
+}
+function viewDiff(){
+return `
+<div class="tool-wrap"><div class="tool-panel">
+<div class="tool-head"><h2>文本差异对比</h2><p>两段文本逐行对比，标出新增与删除，写方案核对改动很方便。</p></div>
+<div class="field-2">
+<div><div class="field-label"><span>原文</span></div><textarea class="ta" id="diffA" rows="9" placeholder="粘贴旧版本"></textarea></div>
+<div><div class="field-label"><span>新文本</span></div><textarea class="ta" id="diffB" rows="9" placeholder="粘贴新版本"></textarea></div>
+</div>
+<div class="row-actions" style="margin-top:14px"><button class="btn btn-primary" id="diffRun">对比</button></div>
+<div id="diffStats" style="margin-top:16px"></div>
+<div id="diffOut" style="margin-top:12px"></div>
+<div class="hint" style="margin-top:10px">每段最多对比 2000 行；超出会提示。对比在本地完成。</div>
+</div></div>`;
+}
+function initDiff(){
+const LCS=(A,B)=>{
+const n=A.length,m=B.length;
+const dp=Array.from({length:n+1},()=>new Array(m+1).fill(0));
+for(let i=n-1;i>=0;i--)for(let j=m-1;j>=0;j--) dp[i][j]=A[i]===B[j]?dp[i+1][j+1]+1:Math.max(dp[i+1][j],dp[i][j+1]);
+const out=[];let i=0,j=0;
+while(i<n&&j<m){ if(A[i]===B[j]){out.push({t:'same',s:A[i]});i++;j++;} else if(dp[i+1][j]>=dp[i][j+1]){out.push({t:'del',s:A[i]});i++;} else {out.push({t:'add',s:B[j]});j++;} }
+while(i<n)out.push({t:'del',s:A[i++]}); while(j<m)out.push({t:'add',s:B[j++]});
+return out;
+};
+$id('diffRun').addEventListener('click', ()=>{
+const A=$id('diffA').value.split('\n'), B=$id('diffB').value.split('\n');
+const stats=$id('diffStats'), out=$id('diffOut');
+if(Math.max(A.length,B.length)>2000){ stats.innerHTML='<div class="hint"><b style="color:#b42318">内容过长</b>，每段请控制在 2000 行以内。</div>'; out.innerHTML=''; return; }
+const rows=LCS(A,B);
+const added=rows.filter(r=>r.t==='add').length, removed=rows.filter(r=>r.t==='del').length;
+stats.innerHTML=`<div class="metric-grid">
+<div class="metric" style="border-color:#bfe5d8;background:#e7f8f3"><b style="color:#0a7a6b">+${added}</b><span>新增行</span></div>
+<div class="metric" style="border-color:#f5c6c2;background:#fdecec"><b style="color:#b42318">−${removed}</b><span>删除行</span></div>
+<div class="metric"><b>${rows.length-added-removed}</b><span>未变化行</span></div>
+</div>`;
+out.innerHTML=`<div style="font-family:ui-monospace,monospace;font-size:12px;line-height:1.7;border:1px solid #e2e8f2;border-radius:10px;padding:12px;overflow:auto;max-height:420px;background:#fafbfe">`
++rows.map(r=>{
+if(r.t==='add') return `<div style="background:#e7f8f3;color:#0a7a6b;padding:1px 8px;border-radius:4px">+ ${esc(r.s) || '&nbsp;'}</div>`;
+if(r.t==='del') return `<div style="background:#fdecec;color:#b42318;padding:1px 8px;border-radius:4px;text-decoration:line-through;opacity:.85">− ${esc(r.s) || '&nbsp;'}</div>`;
+return `<div style="color:#566;padding:1px 8px">  ${esc(r.s) || '&nbsp;'}</div>`;
+}).join('')+'</div>';
+if(!added&&!removed) out.innerHTML+='<div class="hint" style="margin-top:8px">两段文本完全一致，没有差异。</div>';
+});
+}
 const VIEWS = {
 'renovation': {
 title:'装修报价试算器',
@@ -2216,6 +2566,46 @@ html: viewImgResize, init: initImgResize
 title:'图片转 PDF / PDF 拆分',
 sub:'本地合成 PDF，或按页码范围拆分',
 html: viewPdfImg, init: initPdfImg, lib: 'pdf'
+},
+'base64': {
+title:'Base64 编解码',
+sub:'UTF-8 安全，双向实时转换',
+html: viewBase64, init: initBase64
+},
+'url': {
+title:'URL / HTML 编码',
+sub:'四种编码模式，实时转换',
+html: viewUrl, init: initUrl
+},
+'uuid': {
+title:'UUID 生成器',
+sub:'批量生成 UUID v4，可整体复制',
+html: viewUuid, init: initUuid
+},
+'hash': {
+title:'哈希计算',
+sub:'SHA-1 / 256 / 512 一次算完',
+html: viewHash, init: initHash
+},
+'regex': {
+title:'正则测试器',
+sub:'实时高亮匹配并展开捕获组',
+html: viewRegex, init: initRegex
+},
+'color': {
+title:'颜色转换 / 对比度',
+sub:'HEX、RGB、HSL 互转与 WCAG 对比度',
+html: viewColor, init: initColor
+},
+'timestamp': {
+title:'时间戳转换',
+sub:'Unix 与本地日期双向转换',
+html: viewTimestamp, init: initTimestamp
+},
+'diff': {
+title:'文本差异对比',
+sub:'逐行对比，标出新增与删除',
+html: viewDiff, init: initDiff
 }
 };
 function route(){
